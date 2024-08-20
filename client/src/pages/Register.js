@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const SignUp = () => {
+const Register = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -16,7 +19,7 @@ const SignUp = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
@@ -24,7 +27,18 @@ const SignUp = () => {
       return;
     }
 
-    console.log(formData);
+    try {
+      console.log('api sent');
+      const response = await axios.post('http://localhost:3001/api/register', {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      });
+      console.log('API Response:', response.data);
+      navigate('/login');
+    } catch (error) {
+      console.error('Error making API request:', error.response.data);
+    }
   };
 
   return (
@@ -158,4 +172,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default Register;

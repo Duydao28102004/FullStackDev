@@ -1,6 +1,45 @@
-import React from 'react';
+import { React, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useSession } from '../LoginData';
 
 const Login = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { updateUserData } = useSession();
+
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  const handlePasswordChange = (e) => {
+    setPassword(e.target.value);
+  };
+
+  const handleSubmission = async (e) => {
+    e.preventDefault(); // Prevent form from submitting the traditional way
+    try {
+      console.log('API sent');
+      const response = await axios.post('http://localhost:3001/api/login', {
+        username: username,
+        password: password,
+      });
+      console.log('API Response:', response.data);
+      updateUserData({ username: username });
+      navigate('/');
+    } catch (error) {
+      console.error('Error making API request:', error);
+      if (error.response && error.response.status === 401) {
+        // Unauthorized (wrong username or password)
+        setError(error.response.data.error);
+      } else {
+        setError('An unexpected error occurred. Please try again.');
+      }
+    }
+  };
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="flex flex-col md:flex-row w-full min-h-screen max-h-screen h-full rounded-lg shadow-lg">
@@ -11,7 +50,7 @@ const Login = () => {
             <br></br>
             <h2 className="text-2xl font-bold mb-8">Log in</h2>
           </div>
-          <form className="w-full">
+          <form className="w-full" onSubmit={handleSubmission}>
             <div className="mb-4">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                 Username
@@ -22,10 +61,12 @@ const Login = () => {
                   type="text"
                   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pl-10"
                   placeholder="Username"
+                  value={username} // Controlled input
+                  onChange={handleUsernameChange}
                   required
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <img src="/assets/images/username.svg" alt="Username Icon" className="h-5 w-5"/>
+                  <img src="/assets/images/username.svg" alt="Username Icon" className="h-5 w-5" />
                 </span>
               </div>
             </div>
@@ -39,12 +80,12 @@ const Login = () => {
                   type="password"
                   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pl-10"
                   placeholder="Password"
-                  title="Please enter password"
+                  value={password} // Controlled input
+                  onChange={handlePasswordChange}
                   required
-                  
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <img src="/assets/images/password.svg" alt="Password Icon" className="h-5 w-5"/>
+                  <img src="/assets/images/password.svg" alt="Password Icon" className="h-5 w-5" />
                 </span>
               </div>
             </div>
@@ -63,14 +104,17 @@ const Login = () => {
           </form>
           <p className="text-sm text-gray-600 mt-4 text-center">
             Do not have an account yet?{' '}
-            <a href="/signup" className="text-blue-500 hover:text-blue-700">
+            <a href="/register" className="text-blue-500 hover:text-blue-700">
               Sign Up Here
             </a>
-            
           </p>
+          {error && (
+            <div className="mb-4 text-red-500 mx-auto flex">
+              <p>{error}</p>
+            </div>
+          )}
           <br></br>
-          <p className="text-xs text-gray-400 mt-4">© 2024 SocialPulse. All Rights Reserved. SocialPulse is a trademark of COSC2769|COSC2808 Full Stack Development -  Group 16.
-          </p>
+          <p className="text-xs text-gray-400 mt-4">© 2024 SocialPulse. All Rights Reserved. SocialPulse is a trademark of COSC2769|COSC2808 Full Stack Development - Group 16.</p>
         </div>
 
         {/* Right Side - Image */}
