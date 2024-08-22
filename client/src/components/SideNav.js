@@ -48,9 +48,14 @@ export default function SideNav() {
     }
 
     const getButtonClassName = (buttonName) => {
-        return selectedButton === buttonName 
-            ? "bg-blue-300 py-1 px-2 rounded-md" 
-            : "hover:bg-gray-300 hover:rounded-md";
+        let baseClass = "hover:bg-gray-300 hover:rounded-md";
+        if (selectedButton === buttonName) {
+            baseClass = "bg-blue-300 py-1 px-2 rounded-md";
+        }
+        if (buttonName === "Logout") {
+            baseClass += " text-red-500"; // Add red color for Logout button
+        }
+        return baseClass;
     };
 
     return (
