@@ -5,7 +5,7 @@ import Modal from "./Modal"
 import { useNavigate } from "react-router-dom"
 
 
-export default function SideNav() {
+export default function LeftSideNav( { onSelectContent } ) {
 
     const [selectedButton, setSelectedButton] = useState("Home");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,6 +13,7 @@ export default function SideNav() {
 
     const handleButtonClick = (buttonName) => {
         setSelectedButton(buttonName);
+        onSelectContent(buttonName);
     };
 
     const handleLogoutClick = () => {
@@ -44,6 +45,7 @@ export default function SideNav() {
 
     const handleConfirmLogout = () => {
         // logoutUser(); // Call the logout function here only after have connected the backend
+        setIsModalOpen(false);
         navigate("/login");
     }
 
@@ -60,47 +62,35 @@ export default function SideNav() {
 
     return (
         <>
-            <div className="flex flex-col justify-between py-4 bg-gray-200 w-1/6 h-screen sticky">        
+            <div className="flex flex-col justify-between py-4 bg-gray-200 w-1/4 h-screen sticky overflow-y-auto">        
                 {/* Upper Part of the Side Navigation */}
                 <div>
                     {/* Home Page Navigation == Refresh The Feed*/}
                     <IconButton
-                        icon={
-                            <img 
-                                src="/assets/images/home.svg" 
-                                alt="Home Icon" 
-                                className="h-6 w-6"
-                            />
-                        }
-                        text={"Home"}
+                        icon="/assets/images/home.svg"
+                        text="Home"
                         onClick={() => {handleButtonClick("Home")}}
                         className={getButtonClassName("Home")}
                     />
                     
                     {/* User Profile Navigation */}
                     <IconButton
-                        icon={
-                            <img src="/assets/images/user.svg" alt="User Icon" className="h-6 w-6"/>
-                        }
-                        text={"User Profile"}
+                        icon="/assets/images/user.svg"
+                        text="User Profile"
                         onClick={() => {handleButtonClick("User Profile")}}
                         className={getButtonClassName("User Profile")}
                     />
                     {/* Friends List Navigation */}
                     <IconButton
-                        icon={
-                            <img src="/assets/images/friends.svg" alt="Friends Icon" className="h-6 w-6"/>
-                        }
-                        text={"Friends"}
+                        icon="/assets/images/friends.svg"
+                        text="Friends"
                         onClick={() => {handleButtonClick("Friends")}}
                         className={getButtonClassName("Friends")}
                     />
                     {/* Groups List Navigation */}
                     <IconButton
-                        icon={
-                            <img src="/assets/images/users-group.svg" alt="Groups Icon" className="h-6 w-6"/>
-                        }
-                        text={"Groups"}
+                        icon="/assets/images/users-group.svg"
+                        text="Groups"
                         onClick={() => {handleButtonClick("Groups")}}
                         className={getButtonClassName("Groups")}
                     />
@@ -110,28 +100,22 @@ export default function SideNav() {
                 <div>
                     {/* Settings Navigation */}
                     <IconButton
-                        icon={
-                            <img src="/assets/images/settings.svg" alt="Settings Icon" className="h-6 w-6"/>
-                        }
-                        text={"Settings"}
+                        icon="/assets/images/settings.svg"
+                        text="Settings"
                         onClick={() => {handleButtonClick("Settings")}}
                         className={getButtonClassName("Settings")}
                     />
                     {/* Help Navigation */}
                     <IconButton
-                        icon={
-                            <img src="/assets/images/help.svg" alt="Help Icon" className="h-6 w-6"/>
-                        }
-                        text={"Help"}
+                        icon="/assets/images/help.svg"
+                        text="Help"
                         onClick={() => {handleButtonClick("Help")}}
                         className={getButtonClassName("Help")}
                     />
                     {/* Logout Navigation */}
                     <IconButton
-                        icon={
-                            <img src="/assets/images/logout.svg" alt="Logout Icon" className="h-6 w-6"/>
-                        }
-                        text={"Logout"}
+                        icon="/assets/images/logout.svg"
+                        text="Logout"
                         onClick={handleLogoutClick}
                         className={getButtonClassName("Logout")}
                     />
