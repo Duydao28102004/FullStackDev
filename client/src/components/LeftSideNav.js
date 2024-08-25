@@ -62,7 +62,7 @@ export default function LeftSideNav( { onSelectContent } ) {
 
     return (
         <>
-            <div className="flex flex-col justify-between py-4 bg-gray-200 w-1/4 h-screen sticky overflow-y-auto">        
+            <div className="flex flex-col justify-between py-4 bg-gray-200 w-[20%] h-screen sticky overflow-y-auto">        
                 {/* Upper Part of the Side Navigation */}
                 <div>
                     {/* Home Page Navigation == Refresh The Feed*/}
