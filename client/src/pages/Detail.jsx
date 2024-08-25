@@ -2,22 +2,22 @@ import React from 'react'
 
 const Navbar = () => {
   return (
-    <nav className="bg-gray-200 shadow-md" >
-      <div className="w-full px-4 py-4 flex items-center justify-between bg-[#DBE2EF] shadow-lg">
+    <nav className="bg-gray-200 shadow-md"> 
+      <div className="w-[100%] px-4 py-4 flex items-center justify-between bg-[#DBE2EF] shadow-lg">
         
         <div className="flex items-center pl-20">
-          <img src="" alt="Logo" className="h-10 w-10 mr-2" />
+          <img src="" alt="Logo" className="h-10 w-[100%] mr-2" />
         </div>
         
         {/* Search Bar */}
         <div className="flex-grow mx-20">
-          <div className='relative w-65'>
+          <div className='relative w-[85%]'>
           <svg 
               xmlns="http://www.w3.org/2000/svg" 
               fill="none" viewBox="0 0 24 24" 
               stroke-width="1.5" 
               stroke="currentColor" 
-              class="w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
+              class="w-[3%] h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
             <path 
               stroke-linecap="round" 
               stroke-linejoin="round" 
@@ -27,7 +27,7 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Search for friends here..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-[100%] pl-10 pr-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           </div>
           
@@ -60,7 +60,7 @@ const Navbar = () => {
               {/* Notification Button */}
               <button className="text-gray-700 hover:text-blue-500">
                 <svg
-                  className="h-6 w-6"
+                  className="h-[100%] w-6"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -102,9 +102,9 @@ const Navbar = () => {
 
 const HeroSection = () => {
   return (
-    <section className="bg-gray-100 py-12 px-6">
-      <div className="bg-[#DBE2EF] rounded-lg shadow-lg">
-        <div className="flex justify-between items-center max-w-5xl mx-auto p-16 ">
+    <section className="bg-gray-100 py-8 px-6">
+      <div className="bg-[#DBE2EF] rounded-lg shadow-lg py-2 ml-20 mr-20">
+        <div className="flex justify-between items-center max-w-1xl mx-auto p-16 ">
           {/*User Info */}
           <div className="flex items-center space-x-4">
             {/* User Icon and Name */}
@@ -142,7 +142,7 @@ const HeroSection = () => {
 
 const LeftPanel = () => {
   return (
-    <section className="bg-gray-100 py-12 px-6">
+    <section className="bg-gray-100 py-8 px-6 ml-16 mr-16">
       <div className="w-1/3 bg-[#DBE2EF] rounded-lg shadow-lg">
         <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
           <h2 className="text-lg font-bold mb-2">Introduction about Yourself</h2>
@@ -167,7 +167,7 @@ const LeftPanel = () => {
 
 const Settings = () => {
   return (
-    <section className="bg-gray-100 px-4">
+    <section className="bg-gray-100 px-6 ml-4">
       <div className="w-1/3 p-4 bg-white rounded-lg shadow">
         <h2 className="text-lg font-bold mb-2">Settings</h2>
         <div className="flex space-x-2">
