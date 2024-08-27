@@ -5,6 +5,8 @@ import RightSideNav from '../components/RightSideNav';
 import Post from '../components/Post';
 import { useSession } from '../LoginData';
 import axios from 'axios';
+import AddPost from '../components/AddPost';
+import WritePost from '../components/WritePost';
 
 const Home = () => {
     const [selectedContent, setSelectedContent] = useState('Home');
@@ -33,6 +35,7 @@ const Home = () => {
             case 'Home':
                 return (
                     <>
+                    <WritePost />
                     <Post 
                         avatar='/assets/images/test-avatar.jpg'
                         name='John Doe'
