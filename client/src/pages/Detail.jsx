@@ -1,4 +1,5 @@
 import React from 'react'
+import UsersFeedPost from '../components/UsersFeedPost';
 
 const Navbar = () => {
   return (
@@ -142,13 +143,14 @@ const HeroSection = () => {
 
 const LeftPanel = () => {
   return (
-    <section className="bg-gray-100 py-8 px-6 ml-16 mr-16">
-      <div className="w-1/3 bg-[#DBE2EF] rounded-lg shadow-lg">
+    <section className="bg-gray-100 py-2 px-4 ml-16 mr-8">
+      <div className="w-[90%] rounded-lg shadow-lg">
         <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
           <h2 className="text-lg font-bold mb-2">Introduction about Yourself</h2>
           <button className="w-full bg-[#3F72AF] py-2 rounded mb-2">Add Autobiography</button>
           <button className="w-full bg-[#3F72AF] py-2 rounded">Edit Detail Description</button>
         </div>
+        <br/>
         <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
           <h2 className="text-lg font-bold mb-2">Your Images</h2>
           <div className="grid grid-cols-3 gap-2">
@@ -197,7 +199,12 @@ const Detail = () => {
     <div>
       <Navbar/>
       <HeroSection/>
-      <LeftPanel/>
+      <div className="flex px-2 py-8 mx-12 mr-20">
+        <LeftPanel />
+        <div className="flex-grow ml-8">
+          <UsersFeedPost />
+        </div>
+      </div>
       <Settings/>
     </div>
   )
