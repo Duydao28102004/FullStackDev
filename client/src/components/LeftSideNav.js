@@ -56,7 +56,7 @@ export default function LeftSideNav({ onSelectContent, user }) {
                     </div>
                     {/* Home Page Navigation == Refresh The Feed */}
                     <IconButton
-                        icon="/assets/images/home.svg"
+                        icon="/assets/home.svg"
                         text="Home"
                         onClick={() => { handleButtonClick("Home") }}
                         className={getButtonClassName("Home")}
@@ -64,21 +64,21 @@ export default function LeftSideNav({ onSelectContent, user }) {
 
                     {/* User Profile Navigation */}
                     <IconButton
-                        icon="/assets/images/user.svg"
+                        icon="/assets/user.svg"
                         text="User Profile"
                         onClick={() => { handleButtonClick("User Profile") }}
                         className={getButtonClassName("User Profile")}
                     />
                     {/* Friends List Navigation */}
                     <IconButton
-                        icon="/assets/images/friends.svg"
+                        icon="/assets/friends.svg"
                         text="Friends"
                         onClick={() => { handleButtonClick("Friends") }}
                         className={getButtonClassName("Friends")}
                     />
                     {/* Groups List Navigation */}
                     <IconButton
-                        icon="/assets/images/users-group.svg"
+                        icon="/assets/users-group.svg"
                         text="Groups"
                         onClick={() => { handleButtonClick("Groups") }}
                         className={getButtonClassName("Groups")}
@@ -89,21 +89,21 @@ export default function LeftSideNav({ onSelectContent, user }) {
                 <div>
                     {/* Settings Navigation */}
                     <IconButton
-                        icon="/assets/images/settings.svg"
+                        icon="/assets/settings.svg"
                         text="Settings"
                         onClick={() => { handleButtonClick("Settings") }}
                         className={getButtonClassName("Settings")}
                     />
                     {/* Help Navigation */}
                     <IconButton
-                        icon="/assets/images/help.svg"
+                        icon="/assets/help.svg"
                         text="Help"
                         onClick={() => { handleButtonClick("Help") }}
                         className={getButtonClassName("Help")}
                     />
                     {/* Logout Navigation */}
                     <IconButton
-                        icon="/assets/images/logout.svg"
+                        icon="/assets/logout.svg"
                         text="Logout"
                         onClick={handleLogoutClick}
                         className={getButtonClassName("Logout")}
