@@ -1,5 +1,5 @@
 import React from 'react'
-import UsersFeedPost from '../components/UsersFeedPost';
+import WritePost from '../components/WritePost';
 
 const Navbar = () => {
   return (
@@ -202,7 +202,7 @@ const Detail = () => {
       <div className="flex px-2 py-8 mx-12 mr-20">
         <LeftPanel />
         <div className="flex-grow ml-8">
-          <UsersFeedPost />
+          <WritePost />
         </div>
       </div>
       <Settings/>
