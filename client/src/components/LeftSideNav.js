@@ -1,12 +1,12 @@
-import React from "react"
-import { useState } from "react"
-import IconButton from "./IconButton"
-import Modal from "./Modal"
-import { useNavigate } from "react-router-dom"
+import React from "react";
+import { useState } from "react";
+import IconButton from "./IconButton";
+import Modal from "./Modal";
+import { useNavigate } from "react-router-dom";
+import { useSession } from "../LoginData";
 
-
-export default function LeftSideNav( { onSelectContent } ) {
-
+export default function LeftSideNav({ onSelectContent, user }) {
+    const { userData, deleteUserData } = useSession();  // Adjusted to object destructuring
     const [selectedButton, setSelectedButton] = useState("Home");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
@@ -24,30 +24,11 @@ export default function LeftSideNav( { onSelectContent } ) {
         setIsModalOpen(false);
     };
 
-
-    // ADJUST THIS FUNCTION TO LOGOUT THE USER
-
-    // const logoutUser = async () => {
-    //     try {
-    //         const response = await fetch('/api/logout', {
-    //             method: 'POST',
-    //             credentials: 'include' // Include cookies if using session-based auth
-    //         });
-    //         if (response.ok) {
-    //             navigate("/login");
-    //         } else {
-    //             console.error("Failed to log out");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error logging out:", error);
-    //     }
-    // };
-
     const handleConfirmLogout = () => {
-        // logoutUser(); // Call the logout function here only after have connected the backend
+        deleteUserData();
         setIsModalOpen(false);
         navigate("/login");
-    }
+    };
 
     const getButtonClassName = (buttonName) => {
         let baseClass = "hover:bg-gray-300 hover:rounded-md";
@@ -62,36 +43,44 @@ export default function LeftSideNav( { onSelectContent } ) {
 
     return (
         <>
-            <div className="flex flex-col justify-between py-4 bg-gray-200 w-1/4 h-screen sticky overflow-y-auto">        
+            <div className="flex flex-col justify-between py-4 bg-gray-200 w-[20%] h-screen sticky overflow-y-auto">
                 {/* Upper Part of the Side Navigation */}
                 <div>
-                    {/* Home Page Navigation == Refresh The Feed*/}
+                    <div className="flex items-center ml-2 my-4">
+                        <img
+                            src={user.avatar}
+                            alt="User Avatar"
+                            className="w-16 h-16 rounded-full"
+                        />
+                        <p class="text-xl ml-[4%]">Welcome back, {user.username}</p>
+                    </div>
+                    {/* Home Page Navigation == Refresh The Feed */}
                     <IconButton
-                        icon="/assets/images/home.svg"
+                        icon="/assets/home.svg"
                         text="Home"
-                        onClick={() => {handleButtonClick("Home")}}
+                        onClick={() => { handleButtonClick("Home") }}
                         className={getButtonClassName("Home")}
                     />
-                    
+
                     {/* User Profile Navigation */}
                     <IconButton
-                        icon="/assets/images/user.svg"
+                        icon="/assets/user.svg"
                         text="User Profile"
-                        onClick={() => {handleButtonClick("User Profile")}}
+                        onClick={() => { handleButtonClick("User Profile") }}
                         className={getButtonClassName("User Profile")}
                     />
                     {/* Friends List Navigation */}
                     <IconButton
-                        icon="/assets/images/friends.svg"
+                        icon="/assets/friends.svg"
                         text="Friends"
-                        onClick={() => {handleButtonClick("Friends")}}
+                        onClick={() => { handleButtonClick("Friends") }}
                         className={getButtonClassName("Friends")}
                     />
                     {/* Groups List Navigation */}
                     <IconButton
-                        icon="/assets/images/users-group.svg"
+                        icon="/assets/users-group.svg"
                         text="Groups"
-                        onClick={() => {handleButtonClick("Groups")}}
+                        onClick={() => { handleButtonClick("Groups") }}
                         className={getButtonClassName("Groups")}
                     />
                 </div>
@@ -100,21 +89,21 @@ export default function LeftSideNav( { onSelectContent } ) {
                 <div>
                     {/* Settings Navigation */}
                     <IconButton
-                        icon="/assets/images/settings.svg"
+                        icon="/assets/settings.svg"
                         text="Settings"
-                        onClick={() => {handleButtonClick("Settings")}}
+                        onClick={() => { handleButtonClick("Settings") }}
                         className={getButtonClassName("Settings")}
                     />
                     {/* Help Navigation */}
                     <IconButton
-                        icon="/assets/images/help.svg"
+                        icon="/assets/help.svg"
                         text="Help"
-                        onClick={() => {handleButtonClick("Help")}}
+                        onClick={() => { handleButtonClick("Help") }}
                         className={getButtonClassName("Help")}
                     />
                     {/* Logout Navigation */}
                     <IconButton
-                        icon="/assets/images/logout.svg"
+                        icon="/assets/logout.svg"
                         text="Logout"
                         onClick={handleLogoutClick}
                         className={getButtonClassName("Logout")}
@@ -125,17 +114,15 @@ export default function LeftSideNav( { onSelectContent } ) {
                         <p className="text-center text-xs text-gray-500">© 2024 SocialPulse. All Rights Reserved.</p>
                         <p className="text-center text-xs text-gray-500">Version 1.0.0</p>
                     </div>
-
                 </div>
-
             </div>
 
             {/* Logout Modal Confirmation */}
-            <Modal 
+            <Modal
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
                 onConfirm={handleConfirmLogout}
             />
         </>
-    )
+    );
 }

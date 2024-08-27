@@ -53,7 +53,7 @@ export default function RightSideNav() {
     }
 
     return (
-        <div className="flex flex-col w-1/4 h-screen bg-gray-200 py-4 overflow-y-auto sticky">
+        <div className="flex flex-col w-[20%] h-screen bg-gray-200 py-4 overflow-y-auto sticky">
             {/* Pending Friend Requests Section */}
             <div className="flex justify-between mx-2">
                 <h1 className="font-bold text-lg text-center px-2 py-2 relative">

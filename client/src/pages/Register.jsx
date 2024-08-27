@@ -9,6 +9,7 @@ const Register = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    base64Image: '',
   });
   const [error, setError] = useState('');
 
@@ -18,6 +19,26 @@ const Register = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        setFormData({
+          ...formData,
+          file,
+          base64Image: reader.result,
+        });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const selectedImage = formData.base64Image;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +54,7 @@ const Register = () => {
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        base64Image: formData.base64Image,
       });
       console.log('API Response:', response.data);
       navigate('/login');
@@ -52,7 +74,7 @@ const Register = () => {
             <h2 className="text-2xl font-bold mb-8">Sign Up</h2>
           </div>
           <form className="w-full" onSubmit={handleSubmit}>
-            <div className="mb-4">
+            <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
                 Username
               </label>
@@ -73,7 +95,7 @@ const Register = () => {
                 </span>
               </div>
             </div>
-            <div className="mb-4">
+            <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
                 Email
               </label>
@@ -95,7 +117,7 @@ const Register = () => {
                 </span>
               </div>
             </div>
-            <div className="mb-4">
+            <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
                 Password
               </label>
@@ -108,6 +130,8 @@ const Register = () => {
                   onChange={handleChange}
                   className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline pl-10"
                   placeholder="Password"
+                  pattern="(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8,}"
+                  title="Password must contain at least 8 characters, including one uppercase letter and one number."
                   required
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
@@ -135,7 +159,24 @@ const Register = () => {
                 </span>
               </div>
             </div>
-
+            <div className="mb-6">
+              <label htmlFor="image" className="block text-gray-700 text-sm font-bold mb-2">
+                Image:
+              </label>
+              <input
+                type="file"
+                id="image"
+                accept="image/*"
+                onChange={handleFileChange}
+                required
+                className="mt-1 p-2 w-full border rounded-md"
+              />
+            </div>
+            {selectedImage && (
+                <div>
+                  <img src={selectedImage} alt="Selected" className="mt-4 mb-2 w-full max-h-96 object-cover" />
+                </div>
+            )}
             {error && (
               <p className="text-red-500 text-xs italic mb-4">
                 {error}
@@ -163,7 +204,7 @@ const Register = () => {
         <div className="hidden md:block w-full md:w-2/3">
           <img
             src="/assets/images/2437.jpg"
-            alt="Side Image"
+            alt="background"
             className="object-cover h-full w-full rounded-r-lg"
           />
         </div>
