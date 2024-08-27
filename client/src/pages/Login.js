@@ -27,7 +27,7 @@ const Login = () => {
         password: password,
       });
       console.log('API Response:', response.data);
-      updateUserData({ username: username });
+      updateUserData({ userid: response.data.userid });
       navigate('/');
     } catch (error) {
       console.error('Error making API request:', error);
@@ -121,7 +121,7 @@ const Login = () => {
         <div className="hidden md:block w-full md:w-2/3">
           <img
             src="/assets/images/2437.jpg"
-            alt="Side Image"
+            alt="background"
             className="object-cover h-full w-full rounded-r-lg"
           />
         </div>

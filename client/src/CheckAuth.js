@@ -7,10 +7,7 @@ export const CheckAuth = () => {
 
   const checkAuth = () => {
     if (authenticated === false) {
-      // navigate('/login');
-
-      // Need to work on the Home Page so temporary redirect to the root 
-      navigate('/')
+      navigate('/login');
     }
   };
 

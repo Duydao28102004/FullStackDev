@@ -10,7 +10,8 @@ router.post('/api/register', async (req, res) => {
         const user = new User({
             username: req.body.username,
             email: req.body.email,
-            password: hashedPassword
+            password: hashedPassword,
+            avatar: req.body.base64Image,
         });
         const savedUser = await user.save();
         res.json(savedUser);
@@ -29,7 +30,7 @@ router.post('/api/login', async (req, res) => {
         if (!validPassword) {
             return res.status(401).json({error: 'Password is incorrect.'});
         }
-        res.json({message: 'Login successful.'});
+        res.json({userid: user._id});
     } catch (err) {
         res.json({message: err});
     }
