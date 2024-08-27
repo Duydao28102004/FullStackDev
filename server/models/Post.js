@@ -8,7 +8,7 @@ const PostSchema = new Schema({
     visibility: { type: String, enum: ['public', 'friend'], required: true },
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     reactions: [{ type: Schema.Types.ObjectId, ref: 'Reaction' }],
-});
+}, { timestamps: true });
 
 const Post = model('Post', PostSchema);
 module.exports = Post;

@@ -32,8 +32,7 @@ const WritePost = ({user}) => {
             {isModalOpen && (
                 <PostModal
                     onClose={handleCloseModal}
-                    userAvatar={user.avatar}
-                    userName={user.username}
+                    user={user}
                 />
             )}
         </div>

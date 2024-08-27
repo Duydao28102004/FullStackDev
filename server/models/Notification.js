@@ -6,7 +6,7 @@ const NotificationSchema = new Schema({
     message: { type: String, required: true },
     seen: { type: Boolean, default: false },
     relatedObject: { type: Schema.Types.ObjectId }, // Could be a post, comment, etc.
-});
+}, { timestamps: true });
 
 const Notification = model('Notification', NotificationSchema);
 module.exports = Notification;

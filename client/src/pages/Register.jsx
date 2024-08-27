@@ -91,7 +91,7 @@ const Register = () => {
                   required
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <img src="/assets/images/username.svg" alt="Username Icon" className="h-5 w-5" />
+                  <img src="/assets/username.svg" alt="Username Icon" className="h-5 w-5" />
                 </span>
               </div>
             </div>
@@ -113,7 +113,7 @@ const Register = () => {
                   required
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <img src="/assets/images/email.svg" alt="Email Icon" className="h-5 w-5" />
+                  <img src="/assets/email.svg" alt="Email Icon" className="h-5 w-5" />
                 </span>
               </div>
             </div>
@@ -135,7 +135,7 @@ const Register = () => {
                   required
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <img src="/assets/images/password.svg" alt="Password Icon" className="h-5 w-5" />
+                  <img src="/assets/password.svg" alt="Password Icon" className="h-5 w-5" />
                 </span>
               </div>
             </div>
@@ -155,7 +155,7 @@ const Register = () => {
                   required
                 />
                 <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <img src="/assets/images/password.svg" alt="Password Icon" className="h-5 w-5" />
+                  <img src="/assets/password.svg" alt="Password Icon" className="h-5 w-5" />
                 </span>
               </div>
             </div>

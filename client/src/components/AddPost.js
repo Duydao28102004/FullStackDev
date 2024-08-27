@@ -1,31 +1,48 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
-const AddPost = ({ onClose, userAvatar, userName }) => {
-    const [isMediaBoxVisible, setIsMediaBoxVisible] = useState(false); 
-    const [postContent, setPostContent] = useState(""); 
-    const [selectedFile, setSelectedFile] = useState(null); 
+const AddPost = ({ onClose, user }) => {
+    const [isMediaBoxVisible, setIsMediaBoxVisible] = useState(false);
+    const [postContent, setPostContent] = useState("");
+    const [imageStrings, setImageStrings] = useState([]); // Store Base64 strings
+    const [previews, setPreviews] = useState([]); // Store previews of selected files
 
     const handleMediaToggle = () => {
         setIsMediaBoxVisible(!isMediaBoxVisible);
     };
 
     const handleFileChange = (e) => {
-        setSelectedFile(e.target.files[0]); 
+        const files = Array.from(e.target.files); // Convert to array
+
+        files.forEach(file => {
+            const reader = new FileReader();
+            
+            // Create Base64 string for image
+            reader.onloadend = () => {
+                setImageStrings(prevState => [...prevState, reader.result]);
+                setPreviews(prevPreviews => [...prevPreviews, reader.result]);
+            };
+
+            reader.readAsDataURL(file); // Read file as Base64
+        });
     };
 
-    const handlePublish = () => {
-        const formData = new FormData();
-        formData.append('text', postContent);
-        if (selectedFile) {
-            formData.append('file', selectedFile); 
+    const handlePublish = async () => {
+        console.log('Publishing post...');
+        const formData = {
+            userid: user._id, // Assuming you have user data in your state
+            content: postContent,
+            images: imageStrings, // Base64 strings
+            visibility: 'public', // Or 'friend' based on your requirement
+        };
+
+        try {
+            const response = await axios.post('http://localhost:3001/api/posts/createPost', formData);
+            console.log('Post created:', response.data);
+            onClose();
+        } catch (error) {
+            console.error('Error creating post:', error);
         }
-
-
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
-
-        onClose();
     };
 
     return (
@@ -38,39 +55,33 @@ const AddPost = ({ onClose, userAvatar, userName }) => {
                     </button>
                 </div>
 
-              
                 <div className="flex items-center p-4">
                     <img
-                        src={userAvatar} 
-                        alt={userName} 
+                        src={user.avatar}
+                        alt={user.username}
                         className="w-10 h-10 rounded-full"
                     />
-                    <p className="ml-4">Hey {userName}, what are your thoughts?</p>
+                    <p className="ml-4">Hey {user.username}, what are your thoughts?</p>
                 </div>
 
-          
                 <div className="relative p-4">
                     <textarea
                         placeholder="Write something here...."
                         className={`w-full p-2 overflow-hidden border rounded-lg focus:outline-none resize-none ${isMediaBoxVisible ? 'h-8' : 'h-32'}`}
                         value={postContent}
                         onChange={(e) => setPostContent(e.target.value)}
-                        style={{ paddingRight: '2.5rem' }} 
+                        style={{ paddingRight: '2.5rem' }}
                     />
                     <img
-                        src="/assets/images/happy-face.png" 
+                        src="/assets/images/happy-face.png"
                         alt="Emoji"
                         className="w-6 h-6 absolute bottom-6 right-5 cursor-pointer"
                     />
                 </div>
 
                 {isMediaBoxVisible && (
-                    <div className="px-4 py-2 ">
-                        <div className="flex justify-end items-center">
-                          
-                        </div>
-                        <div className="flex items-center justify-center w-full mt-4">
-                            
+                    <div className="px-4 py-2">
+                        <div className="flex flex-col space-y-4">
                             <label 
                                 htmlFor="dropzone-file" 
                                 className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -91,15 +102,28 @@ const AddPost = ({ onClose, userAvatar, userName }) => {
                                         />
                                     </svg>
                                     <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Add photos/videos</span></p>
-            
                                 </div>
                                 <input 
                                     id="dropzone-file" 
                                     type="file" 
                                     className="hidden"
+                                    multiple // Allow multiple file selection
                                     onChange={handleFileChange}
                                 />
                             </label>
+
+                            {previews.length > 0 && (
+                                <div className="flex flex-wrap mt-4">
+                                    {previews.map((preview, index) => (
+                                        <img
+                                            key={index}
+                                            src={preview}
+                                            alt={`Preview ${index}`}
+                                            className="w-24 h-24 object-cover m-1 rounded-md"
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
@@ -109,20 +133,11 @@ const AddPost = ({ onClose, userAvatar, userName }) => {
                         <div className="text-sm p-2">Add into your post </div>
                         <div className="flex space-x-2">
                             <button
-                                className="w-8 h-8 bg-green-600 rounded-full flex justify-center items-center"
-                            >
-                                <img
-                                    src="/assets/images/map.png"
-                                    alt="Upload"
-                                    className="w-4 h-4 inline-block"
-                                />
-                            </button>
-                            <button
                                 onClick={handleMediaToggle}
                                 className="w-8 h-8 bg-green-500 rounded-full flex justify-center items-center"
                             >
                                 <img
-                                    src="/assets/images/add-photo.svg" 
+                                    src="/assets/images/add-photo.svg"
                                     alt="Upload"
                                     className="w-4 h-4 inline-block"
                                 />
@@ -139,7 +154,6 @@ const AddPost = ({ onClose, userAvatar, userName }) => {
                         </button>
                     </div>
                 </div>
-               
             </div>
         </div>
     );

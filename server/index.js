@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 
 const authentication = require('./routes/authentication');
 const user = require('./routes/user');
+const post = require('./routes/post');
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
@@ -21,6 +22,7 @@ app.use(cors(
 
 app.use('/', authentication);
 app.use('/', user);
+app.use('/', post);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
