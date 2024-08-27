@@ -5,7 +5,7 @@ import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../LoginData";
 
-export default function LeftSideNav({ onSelectContent }) {
+export default function LeftSideNav({ onSelectContent, user }) {
     const { userData, deleteUserData } = useSession();  // Adjusted to object destructuring
     const [selectedButton, setSelectedButton] = useState("Home");
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,6 +46,14 @@ export default function LeftSideNav({ onSelectContent }) {
             <div className="flex flex-col justify-between py-4 bg-gray-200 w-[20%] h-screen sticky overflow-y-auto">
                 {/* Upper Part of the Side Navigation */}
                 <div>
+                    <div className="flex items-center ml-2 my-4">
+                        <img
+                            src={user.avatar}
+                            alt="User Avatar"
+                            className="w-16 h-16 rounded-full"
+                        />
+                        <p class="text-xl ml-[4%]">Welcome back, {user.username}</p>
+                    </div>
                     {/* Home Page Navigation == Refresh The Feed */}
                     <IconButton
                         icon="/assets/images/home.svg"

@@ -10,31 +10,29 @@ const Home = () => {
     const [selectedContent, setSelectedContent] = useState('Home');
     const checkAuth = CheckAuth();
     const { userData } = useSession();
-    const [userAvatar, setUserAvatar] = useState('');
+    const [user, setUser] = useState({});
 
     useEffect(() => {
         const fetchAvatar = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/getAvatar?username=${userData.username}`);
-                setUserAvatar(response.data.avatar); // Set the avatar string
+                const response = await axios.get(`http://localhost:3001/api/getUSer?userid=${userData.userid}`);
+                setUser(response.data); // Set the avatar string
             } catch (error) {
                 console.error('Error fetching avatar:', error);
             }
         };
 
         checkAuth();
-        if (userData.username) {
+        if (userData.userid) {
             fetchAvatar(); // Fetch avatar if username is available
         }
-    }, [checkAuth, userData.username]);
+    }, [checkAuth, userData.userid]);
 
     const renderMainContent = () => {
         switch (selectedContent) {
             case 'Home':
                 return (
                     <>
-                    <img src={userAvatar} alt="Base64 Image" style={{ width: '100%', height: 'auto' }} />
-                    <p>{userData.username}</p>
                     <Post 
                         avatar='/assets/images/test-avatar.jpg'
                         name='John Doe'
@@ -56,7 +54,7 @@ const Home = () => {
     return (
         <div className='flex w-full h-screen'>
             {/* Left-side Navigation */}
-            <LeftSideNav onSelectContent={setSelectedContent}/>
+            <LeftSideNav onSelectContent={setSelectedContent} user={user} />
 
             {/* Main Content */}
             <div className='flex flex-col h-full py-4 px-8 w-[60%]'>

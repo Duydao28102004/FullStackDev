@@ -2,13 +2,12 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 
-router.get('/api/getAvatar', async (req, res) => {
-    const username = req.query.username;
-
+router.get('/api/getUser', async (req, res) => {
+    const userid = req.query.userid;
     try {
-        const user = await User.findOne({ username: username });
+        const user = await User.findOne({ _id: userid });
         if (user) {
-            res.json({ avatar: user.avatar });
+            res.json(user);
         } else {
             res.status(404).json({ avatar: '', message: 'User not found' });
         }

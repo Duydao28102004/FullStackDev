@@ -27,7 +27,7 @@ const Login = () => {
         password: password,
       });
       console.log('API Response:', response.data);
-      updateUserData({ username: username });
+      updateUserData({ userid: response.data.userid });
       navigate('/');
     } catch (error) {
       console.error('Error making API request:', error);
