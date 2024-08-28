@@ -4,7 +4,7 @@ import IconButton from "./IconButton";
 import DropdownMenu from "./DropDownMenu";
 import ReactionMenu from "./ReactionMenu"; // Import the ReactionMenu component
 
-export default function Post({ avatar, name, publishedDate, content }) {
+export default function Post({ avatar, name, publishedDate, content, images }) {
     const [reaction, setReaction] = useState(""); // State to manage the reaction
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
     const [isReactionMenuOpen, setIsReactionMenuOpen] = useState(false); // State to manage reaction menu visibility
@@ -75,6 +75,16 @@ export default function Post({ avatar, name, publishedDate, content }) {
                 <p className="text-base font-normal py-2 px-4">
                     {content}
                 </p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 py-2">
+                    {images.slice(0, 5).map((image, index) => (
+                        <img 
+                            key={index} 
+                            src={image} 
+                            alt={`Post Image ${index + 1}`} 
+                            className="w-full h-48 object-cover rounded-md"
+                        />
+                    ))}
+                </div>
             </div>
                 
             {/* Post Actions Section */}
@@ -128,4 +138,5 @@ Post.propTypes = {
     name: PropTypes.string.isRequired,
     publishedDate: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
+    images: PropTypes.arrayOf(PropTypes.string), // Add this prop type for images
 };
