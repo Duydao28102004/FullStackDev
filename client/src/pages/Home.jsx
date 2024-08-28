@@ -11,13 +11,17 @@ const Home = () => {
     const [selectedContent, setSelectedContent] = useState('Home');
     const checkAuth = CheckAuth();
     const { userData } = useSession();
-    const [user, setUser] = useState(null); // Start with null to handle loading state
+    const [user, setUser] = useState(null);
+    const [posts, setPosts] = useState([]);
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const response = await axios.get(`http://localhost:3001/api/getUSer?userid=${userData.userid}`);
                 setUser(response.data);
+                const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
+                setPosts(responsePosts.data);
+                console.log(responsePosts.data);
             } catch (error) {
                 console.error('Error fetching user:', error);
             }
@@ -39,13 +43,16 @@ const Home = () => {
                 return (
                     <>
                         <WritePost user={user} />
-                        <Post 
-                            avatar='/assets/images/test-avatar.jpg'
-                            name='John Doe'
-                            publishedDate='2021-09-15 12:00:00'
-                            content='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.'
+                        {posts.map((post) => (
+                            <Post 
+                            avatar={post.author.avatar}
+                            name={post.author.username}
+                            publishedDate={post.createdAt}
+                            content={post.content}
+                            images={post.images}
                             onComment={() => {console.log('Comment')}}
                         />
+                        ))}
                     </>
                 );
             case 'Friends':

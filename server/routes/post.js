@@ -38,4 +38,14 @@ router.post('/api/posts/createPost', async (req, res) => {
     }
 });
 
+router.get('/api/posts/getPosts', async (req, res) => {
+    try {
+        const posts = await Post.find().populate('author');
+        res.status(200).json(posts);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
 module.exports = router;
