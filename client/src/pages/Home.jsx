@@ -65,17 +65,21 @@ const Home = () => {
     };
     
     return (
-        <div className='flex w-full h-screen'>
+        <div className='flex w-full h-screen pl-4'>
             {/* Left-side Navigation */}
-            <LeftSideNav onSelectContent={setSelectedContent} user={user || { avatar: '', username: '' }} />
+            <div className='sticky top-0 h-screen'>
+                <LeftSideNav onSelectContent={setSelectedContent} user={user || { avatar: '', username: '' }} /> 
+            </div>
 
             {/* Main Content */}
-            <div className='flex flex-col h-full py-4 px-8 w-[60%]'>
+            <div className='flex flex-col h-full py-4 px-0 w-[80%] mx-auto overflow-y-auto'>
                 {renderMainContent()}
             </div>
 
             {/* Right-side Navigation */}
-            <RightSideNav />
+            <div className='sticky top-0 h-screen pr-4 pl-4 '>
+                <RightSideNav /> 
+            </div>
 
         </div>
     );
