@@ -43,7 +43,7 @@ export default function LeftSideNav({ onSelectContent, user }) {
 
     return (
         <>
-            <div className="flex flex-col justify-between py-4 bg-gray-200 w-[20%] h-screen sticky overflow-y-auto">
+            <div className="flex flex-col justify-between py-4 bg-gray-200 w-[90%] h-screen sticky overflow-y-auto">
                 {/* Upper Part of the Side Navigation */}
                 <div>
                     <div className="flex items-center ml-2 my-4">
