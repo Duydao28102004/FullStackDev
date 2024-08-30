@@ -2,7 +2,7 @@ import React from "react";
 
 const LeftPanel = () => {
     return (
-      <section className="bg-gray-100 py-2 px-4 ml-16 mr-8">
+      <section className="py-2 px-4 ml-16 mr-8">
         <div className="w-[90%] rounded-lg shadow-lg">
           <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
             <h2 className="text-lg font-bold mb-2">Introduction about Yourself</h2>

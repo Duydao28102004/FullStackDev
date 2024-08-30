@@ -1,34 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Navbar from '../components/Navbar'
 import HeroSection from '../components/HeroSection'
 import LeftGroupNav from '../components/LeftGroupNav'
 import WritePost from '../components/WritePost'
 import Settings from '../components/Settings'
-import { useSession } from '../LoginData';
-import axios from 'axios';
 
 const Group = () => {
-  const { userData } = useSession();
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`http://localhost:3001/api/getUSer?userid=${userData.userid}`);
-        setUser(response.data);
-      } catch (error) {
-        console.error('Error fetching user:', error);
-      }
-    }
-
-    if (userData.userid) {
-      fetchUser();
-    }
-  }, [userData.userid]);
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
+  const user = {
+    avatar: '/client/public/assets/images/test-avatar.jpg'
+  };
 
   return (
     <div>

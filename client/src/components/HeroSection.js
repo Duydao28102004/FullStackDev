@@ -2,8 +2,8 @@ import React from "react";
 
 const HeroSection = () => {
     return (
-      <section className="bg-gray-100 py-8 px-6">
-        <div className="bg-[#DBE2EF] rounded-lg shadow-lg py-2 ml-20 mr-20">
+      <section className="py-8 px-6">
+        <div className="bg-[#DBE2EF] rounded-lg shadow-2xl py-2 ml-20 mr-20">
           <div className="flex justify-between items-center max-w-1xl mx-auto p-16 ">
             {/*User Info */}
             <div className="flex items-center space-x-4">

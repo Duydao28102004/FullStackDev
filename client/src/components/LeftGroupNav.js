@@ -2,7 +2,7 @@ import React from "react";
 
 const LeftGroupNav = () => {
     return (
-        <section className="bg-gray-100 py-2 px-4 ml-10 mr-6">
+        <section className="py-2 px-4 ml-10 mr-6">
             <div className="w-[100%] h-[110%] rounded-lg shadow-lg">
 
                 <div className="mb-4">
