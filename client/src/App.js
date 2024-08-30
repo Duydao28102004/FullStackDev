@@ -3,6 +3,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Detail from './pages/Detail'
+import Group from './pages/Group'
 
 function App() {
   return (
@@ -25,6 +26,10 @@ function App() {
             <Route
               path="/detail"
               element={<Detail/>}
+            />
+            <Route
+              path="/group"
+              element={<Group/>}
             />
         </Routes>
       </div>     
