@@ -24,7 +24,7 @@ app.use(cors(
 app.use('/', authentication);
 app.use('/', user);
 app.use('/', post);
-app.use('/', reaction)
+app.use('/', reaction);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

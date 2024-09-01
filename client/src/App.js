@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route} from 'react-router-dom';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Detail from './pages/Detail'
+import UserDetail from './pages/UserDetail'
 import Group from './pages/Group'
 
 function App() {
@@ -24,8 +24,8 @@ function App() {
               element={<Register />}
             />
             <Route
-              path="/detail"
-              element={<Detail/>}
+              path="/user/:userid"
+              element={<UserDetail/>}
             />
             <Route
               path="/group"

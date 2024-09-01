@@ -4,9 +4,10 @@ import PropTypes from 'prop-types';
 import IconButton from "./IconButton";
 import DropdownMenu from "./DropDownMenu";
 import ReactionMenu from "./ReactionMenu"; // Import the ReactionMenu component
-import { useSession } from '../LoginData';
+import { useSession } from "../LoginData";
+import { Link } from "react-router-dom";
 
-export default function Post({ avatar, name, publishedDate, content, images, postId }) {
+export default function Post({ avatar, name, publishedDate, content, images, postId, userId }) {
     const [reaction, setReaction] = useState(""); // State to manage the reaction
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
     const [isReactionMenuOpen, setIsReactionMenuOpen] = useState(false); // State to manage reaction menu visibility
@@ -23,7 +24,6 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                     params: { postid: postId },
                 });
                 setReactions(response.data);
-                console.log(response.data);
                 const userReaction = response.data.find(r => r.user._id === userData.userid);
                 if (userReaction) {
                     setReaction(userReaction.type);
@@ -31,7 +31,6 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
             } catch (error) {
                 console.error("Error fetching reactions:", error);
             }
-            console.log(postId)
         };
 
         fetchReactions(); // Call the function
@@ -42,7 +41,6 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
             if (reaction === selectedReaction) {
                 setReaction("");
                 await axios.post('http://localhost:3001/api/reactions/deleteReaction', {
-
                     userid: userData.userid,
                     postid: postId,
                 });
@@ -91,17 +89,17 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
             <div className="flex justify-between py-2 px-4">
                 {/* User's Avatar and Name */}
                 <div className="flex">
-                    <div className="h-12 w-12">
+                    <Link to={`/user/${userId}`} className="h-12 w-12">
                         <img 
                             src={avatar} 
                             alt={name}
                             className="h-full w-full rounded-full object-cover"
                         />
-                    </div>
+                    </Link>
                     <div className="flex flex-col">
-                        <p className="text-base font-semibold text-justify px-2">
+                        <Link to={`/user/${userId}`} className="text-base font-semibold text-justify px-2">
                             {name}
-                        </p>
+                        </Link>
                         <p className="text-sm font-light px-2">
                             {publishedDate}
                         </p>
