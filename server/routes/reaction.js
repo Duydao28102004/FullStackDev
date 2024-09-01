@@ -48,3 +48,5 @@ router.get('/api/reactions/getReactions', async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
+
+module.exports = router;

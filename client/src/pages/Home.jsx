@@ -21,7 +21,6 @@ const Home = () => {
                 setUser(response.data);
                 const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
                 setPosts(responsePosts.data);
-                console.log(responsePosts.data);
             } catch (error) {
                 console.error('Error fetching user:', error);
             }
@@ -50,6 +49,7 @@ const Home = () => {
                             publishedDate={post.createdAt}
                             content={post.content}
                             images={post.images}
+                            postId={post._id}
                             userId={post.author._id}
                         />
                         ))}
