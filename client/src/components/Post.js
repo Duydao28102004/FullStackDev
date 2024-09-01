@@ -1,23 +1,73 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import PropTypes from 'prop-types';
 import IconButton from "./IconButton";
 import DropdownMenu from "./DropDownMenu";
 import ReactionMenu from "./ReactionMenu"; // Import the ReactionMenu component
+import { useSession } from '../LoginData';
 
-export default function Post({ avatar, name, publishedDate, content, images }) {
+export default function Post({ avatar, name, publishedDate, content, images, postId }) {
     const [reaction, setReaction] = useState(""); // State to manage the reaction
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
     const [isReactionMenuOpen, setIsReactionMenuOpen] = useState(false); // State to manage reaction menu visibility
     const [comments, setComments] = useState([]); // State to manage comments
     const [newComment, setNewComment] = useState(""); // State to manage new comment input
+    const [reactions, setReactions] = useState([]); // State to manage reactions
+    const { userData } = useSession();
 
-    const handleReaction = (selectedReaction) => {
-        if (reaction === selectedReaction) {
-            setReaction(""); // Unreaction
-        } else {
-            setReaction(selectedReaction);
+    useEffect(() => {
+        // Fetch the reactions for the post when the component mounts
+        const fetchReactions = async () => {
+            try {
+                const response = await axios.get('http://localhost:3001/api/reactions/getReactions', {
+                    params: { postid: postId },
+                });
+                setReactions(response.data);
+                console.log(response.data);
+                const userReaction = response.data.find(r => r.user._id === userData.userid);
+                if (userReaction) {
+                    setReaction(userReaction.type);
+                }
+            } catch (error) {
+                console.error("Error fetching reactions:", error);
+            }
+            console.log(postId)
+        };
+
+        fetchReactions(); // Call the function
+
+    }, [postId, userData.userid]);
+    const handleReaction = async (selectedReaction) => {
+        try {
+            if (reaction === selectedReaction) {
+                setReaction("");
+                await axios.post('http://localhost:3001/api/reactions/deleteReaction', {
+
+                    userid: userData.userid,
+                    postid: postId,
+                });
+            } else {
+                // Send the reaction to the server
+                await axios.post('http://localhost:3001/api/reactions/react', {
+                    userid: userData.userid,
+                    postid: postId,
+                    type: selectedReaction,
+                });
+                setReaction(selectedReaction);
+            }
+            setIsReactionMenuOpen(false);
+
+            
+
+            // Fetch updated reactions after the reaction is added/updated
+            const response = await axios.get('http://localhost:3001/api/reactions/getReactions', {
+                params: { postid: postId },
+            });
+            setReactions(response.data);
+
+        } catch (error) {
+            console.error("Error handling reaction:", error);
         }
-        setIsReactionMenuOpen(false);
     };
 
     const toggleDropdown = () => {
@@ -92,7 +142,7 @@ export default function Post({ avatar, name, publishedDate, content, images }) {
                 <div className="relative">
                     <IconButton
                         icon={reaction ? `/assets/images/react-${reaction}.png` : "/assets/images/react-like.png"}
-                        text={reaction || "Like"}
+                        text={reaction || "like"}
                         onClick={toggleReactionMenu}
                         className={`mx-1 hover:bg-gray-400 hover:rounded-md ${reaction ? "text-blue-800 scale-110 transition-transform duration-300 ease-in-out" : ""}`}
                     />
@@ -139,4 +189,5 @@ Post.propTypes = {
     publishedDate: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
     images: PropTypes.arrayOf(PropTypes.string), // Add this prop type for images
+    postId: PropTypes.string.isRequired,
 };
