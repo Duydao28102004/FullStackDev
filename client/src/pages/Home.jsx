@@ -50,7 +50,7 @@ const Home = () => {
                             publishedDate={post.createdAt}
                             content={post.content}
                             images={post.images}
-                            onComment={() => {console.log('Comment')}}
+                            userId={post.author._id}
                         />
                         ))}
                     </>

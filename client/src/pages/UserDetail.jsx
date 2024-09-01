@@ -5,8 +5,10 @@ import HeroSection from '../components/HeroSection'
 import LeftPanel from '../components/LeftPanel'
 import Settings from '../components/Settings';
 import Post from '../components/Post'
+import { useParams } from 'react-router-dom';
 
-const Detail = () => {
+const UserDetail = () => {
+  const {userid}  = useParams();
   const dummyPosts = [
     {
         author: {
@@ -55,4 +57,4 @@ const Detail = () => {
   )
 }
 
-export default Detail
+export default UserDetail
