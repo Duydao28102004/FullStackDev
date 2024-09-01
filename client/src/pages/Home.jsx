@@ -50,6 +50,7 @@ const Home = () => {
                             publishedDate={post.createdAt}
                             content={post.content}
                             images={post.images}
+                            postId={post._id}
                             onComment={() => {console.log('Comment')}}
                         />
                         ))}
