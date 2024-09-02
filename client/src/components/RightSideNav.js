@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 export default function RightSideNav() {
     const navigate = useNavigate();
 
+    // Initial friend requests data
     const initialRequests = [
         { id: 1, avatar: "/assets/images/test-avatar.jpg", name: "John Doe" },
         { id: 2, avatar: "/assets/images/test-avatar.jpg", name: "Jane Doe" },
@@ -20,18 +21,24 @@ export default function RightSideNav() {
         { id: 12, avatar: "/assets/images/test-avatar.jpg", name: "Jane Smith" }
     ];
 
+    // State to manage remaining requests
     const [remainingRequests, setRemainingRequests] = useState(initialRequests);
+    // State to manage the last 5 pending requests
     const [pendingRequests, setPendingRequests] = useState(initialRequests.slice(-5));
+    // State to manage the total number of requests
     const [totalRequests, setTotalRequests] = useState(initialRequests.length);
 
+    // Navigate to pending friend profile
     const navigateToPendingFriendProfile = () => {
         navigate("/pending-friend-profile");
     }
 
+    // Navigate to pending list
     const navigateToPendingList = () => {
         navigate("/pending-list");
     }
 
+    // Handle accept friend request
     const handleAccept = (id) => {
         setRemainingRequests(prevRequests => {
             const updatedRequests = prevRequests.filter(request => request.id !== id);
@@ -42,6 +49,7 @@ export default function RightSideNav() {
         console.log("Accepted request with id:", id);
     }
 
+    // Handle reject friend request
     const handleReject = (id) => {
         setRemainingRequests(prevRequests => {
             const updatedRequests = prevRequests.filter(request => request.id !== id);

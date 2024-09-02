@@ -28,6 +28,12 @@ const Home = () => {
                 return "Friends";
             case 'User Profile':
                 return "User Profile";
+            case 'Groups':
+                return "Groups";
+            case 'Settings':
+                return "Settings";
+            case 'Help':
+                return "Help";
             default:
                 return <div>Select an option from the left navigation</div>;
         }

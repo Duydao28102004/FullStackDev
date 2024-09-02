@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from 'prop-types';
 import IconButton from "./IconButton";
+import Reactions from "./Reactions";
 
 const IconActionButton = ({ icon, onClick, className }) => {
     return (
@@ -19,14 +20,45 @@ IconActionButton.propTypes = {
     className: PropTypes.string
 }
 
+const ReactionBtn = ({ icon, text, onClick, className }) => {
+    return (
+        <div className={`flex items-center cursor-pointer py-2 px-2 mx-2 ${className}`} onClick={onClick}>
+            <img src={icon} alt={`${text} Icon`} className="h-6 w-6" />
+            <p className='text-lg font-semibold px-2'>
+                {text}
+            </p>
+        </div>
+    );
+}
+
+ReactionBtn.propTypes = {
+    icon: PropTypes.string.isRequired,
+    text: PropTypes.string.isRequired,
+    onClick: PropTypes.func.isRequired,
+    className: PropTypes.string
+}
+
 export default function UsersFeedPost({ avatar, name, publishedDate, content, onReactPost, onComment, onEdit, onDelete }) {
 
     const [isLiked, setIsLiked] = useState(false);
+    const [isLoved, setIsLoved] = useState(false);
+    const [isHaha, setIsHaha] = useState(false);
+    const [isWow, setIsWow] = useState(false);
+    const [isSad, setIsSad] = useState(false);
+    const [isAngry, setIsAngry] = useState(false);
+    
+    const [showReactions, setShowReactions] = useState(false);
 
-    const handleLikeClick = () => {
-        setIsLiked(!isLiked);
-        onReactPost();
-    }
+    const handleReaction = (reaction) => {
+        setIsLiked(reaction === 'Like' ? !isLiked : false);
+        setIsLoved(reaction === 'Love' ? !isLoved : false);
+        setIsHaha(reaction === 'Haha' ? !isHaha : false);
+        setIsWow(reaction === 'Wow' ? !isWow : false);
+        setIsSad(reaction === 'Sad' ? !isSad : false);
+        setIsAngry(reaction === 'Angry' ? !isAngry : false);
+        onReactPost(reaction);
+        setShowReactions(false);
+    };
 
     return (
         <div className="flex flex-col w-full py-2 px-4 my-2 bg-gray-300 rounded-md">
@@ -37,7 +69,7 @@ export default function UsersFeedPost({ avatar, name, publishedDate, content, on
                     <div className="h-12 w-12">
                         <img 
                             src={avatar} 
-                            alt={`name`}
+                            alt={name}
                             className="h-full w-full rounded-full object-cover"
                         />
                     </div>
@@ -72,13 +104,36 @@ export default function UsersFeedPost({ avatar, name, publishedDate, content, on
             </div>
                 
             {/* Post Actions Section */}
-            <div className="flex justify-end py-2 px-2">
-                <IconButton
-                    icon={isLiked ? "/assets/images/react-like-filled.svg" : "/assets/images/react-like.svg"}
-                    text="Like"
-                    onClick={handleLikeClick}
-                    className={`mx-1 hover:bg-gray-400 hover:rounded-md ${isLiked ? "text-blue-800 scale-110 transition-transform duration-300 ease-in-out" : ""}`}
-                />
+            <div className="flex justify-end px-2 py-1 relative">
+                <div
+                    onMouseEnter={() => setShowReactions(true)}
+                    onMouseLeave={() => setShowReactions(false)}
+                    className="relative"
+                >
+                    <ReactionBtn
+                        icon={isLiked ? "/assets/images/react-like-filled.svg" : "/assets/images/react-like.svg"}
+                        text="Like"
+                        onClick={() => handleReaction('Like')}
+                        className={`mx-1 hover:bg-gray-400 hover:rounded-md ${isLiked ? "text-blue-800 scale-110 transition-transform duration-300 ease-in-out" : ""}`}
+                    />
+                    {showReactions && (
+                        <div
+                            className="absolute bottom-full"
+                            onMouseEnter={() => setShowReactions(true)}
+                            onMouseLeave={() => setShowReactions(false)}
+                        >
+                            <Reactions 
+                                onReact={handleReaction} 
+                                isLiked={isLiked}
+                                isLoved={isLoved}
+                                isHaha={isHaha}
+                                isWow={isWow}
+                                isSad={isSad}
+                                isAngry={isAngry}
+                            />
+                        </div>
+                    )}
+                </div>
                 <IconButton
                     icon="/assets/images/comment.svg"
                     text="Comment"
