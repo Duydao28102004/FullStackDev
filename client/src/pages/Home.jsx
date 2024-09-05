@@ -14,23 +14,23 @@ const Home = () => {
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
 
-    useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/api/getUSer?userid=${userData.userid}`);
-                setUser(response.data);
-                const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
-                setPosts(responsePosts.data);
-            } catch (error) {
-                console.error('Error fetching user:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const fetchUser = async () => {
+    //         try {
+    //             const response = await axios.get(`http://localhost:3001/api/getUSer?userid=${userData.userid}`);
+    //             setUser(response.data);
+    //             const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
+    //             setPosts(responsePosts.data);
+    //         } catch (error) {
+    //             console.error('Error fetching user:', error);
+    //         }
+    //     };
 
-        checkAuth();
-        if (userData.userid) {
-            fetchUser(); // Fetch user data if userid is available
-        }
-    }, [checkAuth, userData.userid]);
+    //     checkAuth();
+    //     if (userData.userid) {
+    //         fetchUser(); // Fetch user data if userid is available
+    //     }
+    // }, [checkAuth, userData.userid]);
 
     const renderMainContent = () => {
         if (!user) {
