@@ -14,24 +14,28 @@ const Home = () => {
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
 
+    // Load data only if not cached
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`);
-                setUser(response.data);
-
-                const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
-                setPosts(responsePosts.data);
-            } catch (error) {
-                console.error('Error fetching user:', error);
+        const fetchUserDataAndPosts = async () => {
+            if (!user && !posts.length) { // Only fetch if user or posts are not already loaded
+                try {
+                    const [userResponse, postsResponse] = await Promise.all([
+                        axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`),
+                        axios.get('http://localhost:3001/api/posts/getPosts'),
+                    ]);
+                    setUser(userResponse.data);
+                    setPosts(postsResponse.data);
+                } catch (error) {
+                    console.error('Error fetching data:', error);
+                }
             }
         };
 
         checkAuth();
         if (userData.userid) {
-            fetchUser(); // Fetch user data if userid is available
+            fetchUserDataAndPosts(); // Fetch only if data not present
         }
-    }, [checkAuth, userData.userid]);
+    }, [checkAuth, userData.userid, user, posts.length]);
 
     const renderMainContent = () => {
         if (!user) {
