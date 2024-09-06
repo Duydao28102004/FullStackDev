@@ -21,9 +21,9 @@ const UserDetail = () => {
     const fetchUser = async () => {
       if (userData && userData.userid) {
         try {
-          console.log(userData);
           const response = await axios.get(`http://localhost:3001/api/getUser?userid=${userid}`);
           setUser(response.data);
+          console.log(response.data);
           const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
           setPosts(responsePosts.data);
           const checkFriend = await axios.get(`http://localhost:3001/api/friendsRequest/checkRequest?senderid=${userData.userid}&receiverid=${userid}`);
@@ -126,7 +126,8 @@ const UserDetail = () => {
                 />
                 <div>
                   <span className="text-gray-700 font-medium text-lg block">{user.username}</span>
-                  <span className="text-sm text-gray-500 block">300 Friends</span>
+                  {/* Display friend count */}
+                  <span className="text-sm text-gray-500 block">{user.friends ? user.friends.length : 0} friends</span>
                 </div>
               </div>
             </div>

@@ -5,6 +5,7 @@ import Post from '../components/Post';
 import { useSession } from '../LoginData';
 import axios from 'axios';
 import WritePost from '../components/WritePost';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
     const [selectedContent, setSelectedContent] = useState('Home');
@@ -36,24 +37,39 @@ const Home = () => {
         if (!user) {
             return <div>Loading...</div>; // Loading state
         }
-
+    
+        // Get friend IDs for easier comparison
+        const friendIds = user.friends.map((friend) => friend._id);
+    
         switch (selectedContent) {
             case 'Home':
+                // Filter posts: show either public posts or posts from friends
+                const filteredPosts = posts
+                .filter(
+                    post => post.visibility === 'public' || friendIds.includes(post.author._id)
+                )
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by newest first
+                ;
+                
                 return (
                     <>
                         <WritePost user={user} />
-                        {posts.map((post) => (
-                            <Post 
-                                key={post._id} // Ensure each post has a unique key
-                                avatar={post.author.avatar}
-                                name={post.author.username}
-                                publishedDate={post.createdAt}
-                                content={post.content}
-                                images={post.images}
-                                postId={post._id}
-                                userId={post.author._id}
-                            />
-                        ))}
+                        {filteredPosts.length > 0 ? (
+                            filteredPosts.map((post) => (
+                                <Post 
+                                    key={post._id} // Ensure each post has a unique key
+                                    avatar={post.author.avatar}
+                                    name={post.author.username}
+                                    publishedDate={post.createdAt}
+                                    content={post.content}
+                                    images={post.images}
+                                    postId={post._id}
+                                    userId={post.author._id}
+                                />
+                            ))
+                        ) : (
+                            <p>No posts to display.</p>
+                        )}
                     </>
                 );
             case 'Friends':
@@ -88,23 +104,24 @@ const Home = () => {
                     <div>
                         {user && user.friends && user.friends.length > 0 ? (
                             user.friends.map((friend) => (
-                                <div 
-                                    key={friend._id} 
-                                    className="flex items-center justify-start py-2 px-2 mx-2 cursor-pointer hover:bg-gray-300 hover:rounded-lg"
-                                >
-                                    <div className="h-12 w-12">
-                                        <img 
-                                            src={friend.avatar} 
-                                            alt={friend.username}
-                                            className="h-full w-full rounded-full object-cover"
-                                        />
+                                <Link to={`/user/${friend._id}`} key={friend._id}> {/* Use Link to navigate */}
+                                    <div 
+                                        className="flex items-center justify-start py-2 px-2 mx-2 cursor-pointer hover:bg-gray-300 hover:rounded-lg"
+                                    >
+                                        <div className="h-12 w-12">
+                                            <img 
+                                                src={friend.avatar || '/default-avatar.png'}  // Fallback to default avatar
+                                                alt={friend.username}
+                                                className="h-full w-full rounded-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <p className="text-base font-semibold px-2">
+                                                {friend.username}
+                                            </p>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col">
-                                        <p className="text-base font-semibold px-2">
-                                            {friend.username}
-                                        </p>
-                                    </div>
-                                </div>
+                                </Link>
                             ))
                         ) : (
                             <p className="text-center text-gray-500">No friends found.</p>

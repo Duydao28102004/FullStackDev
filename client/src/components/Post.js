@@ -6,6 +6,7 @@ import DropdownMenu from "./DropDownMenu";
 import ReactionMenu from "./ReactionMenu"; // Import the ReactionMenu component
 import { useSession } from "../LoginData";
 import { Link } from "react-router-dom";
+import PostDetailModal from "./PostDetailModal"; // Import the PostDetailModal component
 
 export default function Post({ avatar, name, publishedDate, content, images, postId, userId }) {
     const [reaction, setReaction] = useState(""); // State to manage the reaction
@@ -14,6 +15,7 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
     const [comments, setComments] = useState([]); // State to manage comments
     const [newComment, setNewComment] = useState(""); // State to manage new comment input
     const [reactions, setReactions] = useState([]); // State to manage reactions
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // State to manage the detailed view modal
     const { userData } = useSession();
 
     useEffect(() => {
@@ -36,6 +38,7 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
         fetchReactions(); // Call the function
 
     }, [postId, userData.userid]);
+
     const handleReaction = async (selectedReaction) => {
         try {
             if (reaction === selectedReaction) {
@@ -54,8 +57,6 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                 setReaction(selectedReaction);
             }
             setIsReactionMenuOpen(false);
-
-            
 
             // Fetch updated reactions after the reaction is added/updated
             const response = await axios.get('http://localhost:3001/api/reactions/getReactions', {
@@ -76,11 +77,8 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
         setIsReactionMenuOpen(!isReactionMenuOpen);
     };
 
-    const handleAddComment = () => {
-        if (newComment.trim()) {
-            setComments([...comments, newComment]);
-            setNewComment(""); // Clear the input field after adding a comment
-        }
+    const toggleDetailModal = () => {
+        setIsDetailModalOpen(!isDetailModalOpen);
     };
 
     return (
@@ -101,7 +99,7 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                             {name}
                         </Link>
                         <p className="text-sm font-light px-2">
-                            {publishedDate}
+                            {new Date(publishedDate).toLocaleString()} {/* Convert ISO to local date/time */}
                         </p>
                     </div>
                 </div>
@@ -148,35 +146,28 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                         <ReactionMenu onReact={handleReaction} />
                     )}
                 </div>
+                <button
+                    className="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md"
+                    onClick={toggleDetailModal}
+                >
+                    View Details
+                </button>
             </div>
 
-            {/* Comment Section */}
-            <div className="mt-4">
-                <div className="flex">
-                    <input
-                        type="text"
-                        className="flex-1 border rounded-l-md px-4 py-2"
-                        placeholder="Write a comment..."
-                        value={newComment}
-                        onChange={(e) => setNewComment(e.target.value)}
-                    />
-                    <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded-r-md"
-                        onClick={handleAddComment}
-                    >
-                        Comment
-                    </button>
-                </div>
-                <div className="mt-4">
-                    {comments.map((comment, index) => (
-                        <div key={index} className="mb-2">
-                            <p className="text-sm bg-gray-200 p-2 rounded-md">
-                                {comment}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            {/* Post Detail Modal */}
+            {isDetailModalOpen && (
+                <PostDetailModal
+                    avatar={avatar}
+                    name={name}
+                    publishedDate={publishedDate}
+                    content={content}
+                    images={images}
+                    comments={comments}
+                    onClose={toggleDetailModal}
+                    postId={postId}
+                    reactions={reactions}
+                />
+            )}
         </div>
     );
 }
@@ -186,6 +177,8 @@ Post.propTypes = {
     name: PropTypes.string.isRequired,
     publishedDate: PropTypes.string.isRequired,
     content: PropTypes.string.isRequired,
-    images: PropTypes.arrayOf(PropTypes.string), // Add this prop type for images
+    images: PropTypes.arrayOf(PropTypes.string),
     postId: PropTypes.string.isRequired,
+    userId: PropTypes.string.isRequired,
+    visibility: PropTypes.string.isRequired, // Add this prop type for visibility
 };

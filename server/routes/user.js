@@ -5,7 +5,8 @@ const User = require('../models/User');
 router.get('/api/getUser', async (req, res) => {
     const userid = req.query.userid;
     try {
-        const user = await User.findOne({ _id: userid });
+        // Find the user and populate the 'friends' field
+        const user = await User.findOne({ _id: userid }).populate('friends', 'username avatar');
         if (user) {
             res.json(user);
         } else {
