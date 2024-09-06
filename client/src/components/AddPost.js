@@ -6,6 +6,7 @@ const AddPost = ({ onClose, user }) => {
     const [postContent, setPostContent] = useState("");
     const [imageStrings, setImageStrings] = useState([]); // Store Base64 strings
     const [previews, setPreviews] = useState([]); // Store previews of selected files
+    const [visibility, setVisibility] = useState('public'); // Default visibility
 
     const handleMediaToggle = () => {
         setIsMediaBoxVisible(!isMediaBoxVisible);
@@ -33,7 +34,7 @@ const AddPost = ({ onClose, user }) => {
             userid: user._id, // Assuming you have user data in your state
             content: postContent,
             images: imageStrings, // Base64 strings
-            visibility: 'public', // Or 'friend' based on your requirement
+            visibility: visibility, // Visibility selected by user
         };
 
         try {
@@ -127,6 +128,19 @@ const AddPost = ({ onClose, user }) => {
                         </div>
                     </div>
                 )}
+
+                {/* Visibility Selection */}
+                <div className="p-4">
+                    <label className="block text-gray-700 text-sm font-bold mb-2">Post Visibility</label>
+                    <select
+                        value={visibility}
+                        onChange={(e) => setVisibility(e.target.value)}
+                        className="w-full p-2 border rounded-lg focus:outline-none"
+                    >
+                        <option value="public">Public</option>
+                        <option value="friends">Friends</option>
+                    </select>
+                </div>
 
                 <div className='flex justify-between'>
                     <div className="flex justify-between items-center p-4">

@@ -17,16 +17,7 @@ export default function LeftSideNav({ onSelectContent, user }) {
     };
 
     const handleLogoutClick = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleConfirmLogout = () => {
         deleteUserData();
-        setIsModalOpen(false);
         navigate("/login");
     };
 
@@ -43,7 +34,7 @@ export default function LeftSideNav({ onSelectContent, user }) {
 
     return (
         <>
-            <div className="flex flex-col justify-between py-4 bg-gray-200 w-[90%] h-screen sticky overflow-y-auto">
+            <div className="flex flex-col justify-between py-4 bg-gray-200 h-screen sticky overflow-y-auto">
                 {/* Upper Part of the Side Navigation */}
                 <div>
                     <div className="flex items-center ml-2 my-4">
@@ -116,13 +107,6 @@ export default function LeftSideNav({ onSelectContent, user }) {
                     </div>
                 </div>
             </div>
-
-            {/* Logout Modal Confirmation */}
-            <Modal
-                isOpen={isModalOpen}
-                onClose={handleModalClose}
-                onConfirm={handleConfirmLogout}
-            />
         </>
     );
 }

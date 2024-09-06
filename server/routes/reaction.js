@@ -91,6 +91,9 @@ router.post('/api/reactions/deleteReaction', async (req, res) => {
             return res.status(404).json({ error: 'Reaction not found' });
         }
 
+        // Remove the reaction from the post's reactions array
+        post.reactions = post.reactions.filter(reactionId => reactionId.toString() !== existingReaction._id.toString());
+        await post.save();
         // Delete the reaction
         await existingReaction.deleteOne();
         res.status(204).end();

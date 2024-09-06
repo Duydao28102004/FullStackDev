@@ -1,7 +1,6 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import CheckAuth from '../CheckAuth';
 import LeftSideNav from '../components/LeftSideNav';
-import RightSideNav from '../components/RightSideNav';
 import Post from '../components/Post';
 import { useSession } from '../LoginData';
 import axios from 'axios';
@@ -17,8 +16,9 @@ const Home = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/getUSer?userid=${userData.userid}`);
+                const response = await axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`);
                 setUser(response.data);
+
                 const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
                 setPosts(responsePosts.data);
             } catch (error) {
@@ -44,14 +44,15 @@ const Home = () => {
                         <WritePost user={user} />
                         {posts.map((post) => (
                             <Post 
-                            avatar={post.author.avatar}
-                            name={post.author.username}
-                            publishedDate={post.createdAt}
-                            content={post.content}
-                            images={post.images}
-                            postId={post._id}
-                            userId={post.author._id}
-                        />
+                                key={post._id} // Ensure each post has a unique key
+                                avatar={post.author.avatar}
+                                name={post.author.username}
+                                publishedDate={post.createdAt}
+                                content={post.content}
+                                images={post.images}
+                                postId={post._id}
+                                userId={post.author._id}
+                            />
                         ))}
                     </>
                 );
@@ -67,7 +68,7 @@ const Home = () => {
     return (
         <div className='flex w-full h-screen pl-4'>
             {/* Left-side Navigation */}
-            <div className='sticky top-0 h-screen'>
+            <div className='sticky top-0 h-screen w-[20%]'>
                 <LeftSideNav onSelectContent={setSelectedContent} user={user || { avatar: '', username: '' }} /> 
             </div>
 
@@ -76,11 +77,41 @@ const Home = () => {
                 {renderMainContent()}
             </div>
 
-            {/* Right-side Navigation */}
-            <div className='sticky top-0 h-screen pr-4 pl-4 '>
-                <RightSideNav /> 
+            {/* Right-side Navigation (Friends List) */}
+            <div className='sticky top-0 h-screen pr-4 pl-4 w-[20%]'>
+                <div className="flex flex-col w-full h-screen bg-gray-200 py-4 overflow-y-auto">
+                    <div className="flex justify-between mx-2">
+                        <h1 className="font-bold text-lg text-center px-2 py-2">
+                            Friends List
+                        </h1>
+                    </div>
+                    <div>
+                        {user && user.friends && user.friends.length > 0 ? (
+                            user.friends.map((friend) => (
+                                <div 
+                                    key={friend._id} 
+                                    className="flex items-center justify-start py-2 px-2 mx-2 cursor-pointer hover:bg-gray-300 hover:rounded-lg"
+                                >
+                                    <div className="h-12 w-12">
+                                        <img 
+                                            src={friend.avatar} 
+                                            alt={friend.username}
+                                            className="h-full w-full rounded-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <p className="text-base font-semibold px-2">
+                                            {friend.username}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <p className="text-center text-gray-500">No friends found.</p>
+                        )}
+                    </div>
+                </div>
             </div>
-
         </div>
     );
 };
