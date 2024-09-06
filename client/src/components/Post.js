@@ -12,8 +12,7 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
     const [reaction, setReaction] = useState(""); // State to manage the reaction
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
     const [isReactionMenuOpen, setIsReactionMenuOpen] = useState(false); // State to manage reaction menu visibility
-    const [comments, setComments] = useState([]); // State to manage comments
-    const [newComment, setNewComment] = useState(""); // State to manage new comment input
+    const [comments] = useState([]); // State to manage comments
     const [reactions, setReactions] = useState([]); // State to manage reactions
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // State to manage the detailed view modal
     const { userData } = useSession();
@@ -126,7 +125,7 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                         <img 
                             key={index} 
                             src={image} 
-                            alt={`Post Image ${index + 1}`} 
+                            alt={`${index + 1}`} 
                             className="w-full h-48 object-cover rounded-md"
                         />
                     ))}

@@ -1,14 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import IconButton from "./IconButton";
-import Modal from "./Modal";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../LoginData";
 
 export default function LeftSideNav({ onSelectContent, user }) {
-    const { userData, deleteUserData } = useSession();  // Adjusted to object destructuring
+    const { deleteUserData } = useSession();  // Adjusted to object destructuring
     const [selectedButton, setSelectedButton] = useState("Home");
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleButtonClick = (buttonName) => {
