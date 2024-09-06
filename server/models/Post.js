@@ -5,7 +5,7 @@ const PostSchema = new Schema({
     group: { type: Schema.Types.ObjectId, ref: 'Group' }, // Optional if the post is in a group
     content: { type: String, required: true },
     images: [String],
-    visibility: { type: String, enum: ['public', 'friend'], required: true },
+    visibility: { type: String, enum: ['public', 'friends'], required: true },
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
     reactions: [{ type: Schema.Types.ObjectId, ref: 'Reaction' }],
 }, { timestamps: true });
