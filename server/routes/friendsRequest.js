@@ -90,7 +90,7 @@ router.get('/api/friendsRequest/checkRequest', async (req, res) => {
 
         const reverseRequest = await Notification.findOne({ sender: receiverid, receiver: senderid, type: 'friendRequest' });
         if (reverseRequest) {
-            return res.status(200).json({ requestSent: true , reverse: true , friend: false});
+            return res.status(200).json({ requestSent: false , reverse: true , friend: false});
         }
         console.log("called")
         res.status(200).json({ requestSent: false , reverse: false , friend: false});
@@ -98,6 +98,41 @@ router.get('/api/friendsRequest/checkRequest', async (req, res) => {
         console.error('Error checking friend request:', error);
         res.status(500).json({ error: 'Server error' });
     }
+});
+
+router.post('/api/friendsRequest/acceptRequest', async (req, res) => {
+    try {
+        const {senderid, receiverid } = req.body;
+
+        // Check if the sender and receiver exist
+        const sender = await User.findById(senderid);
+        const receiver = await User.findById(receiverid);
+        if (!sender || !receiver) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if the sender has already sent a request to the receiver
+        const existingRequest = await Notification.findOne({ sender: senderid, receiver: receiverid, type: 'friendRequest' });
+        if (!existingRequest) {
+            return res.status(400).json({ error: 'Request not found' });
+        }
+
+        // Add each user to the other's friends list
+        sender.friends.push(receiverid);
+        receiver.friends.push(senderid);
+
+        // Remove the friend request notification
+        await existingRequest.remove();
+
+        // Save the updated users
+        await sender.save();
+        await receiver.save();
+
+        res.status(200).json({ message: 'Friend request accepted' });
+    } catch (error) {
+        console.error('Error accepting friend request:', error);
+        res.status(500).json({ error: 'Server error' });
+    }   
 });
 
 module.exports = router;

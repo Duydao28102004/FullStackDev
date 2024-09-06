@@ -17,16 +17,7 @@ export default function LeftSideNav({ onSelectContent, user }) {
     };
 
     const handleLogoutClick = () => {
-        setIsModalOpen(true);
-    };
-
-    const handleModalClose = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleConfirmLogout = () => {
         deleteUserData();
-        setIsModalOpen(false);
         navigate("/login");
     };
 
@@ -116,13 +107,6 @@ export default function LeftSideNav({ onSelectContent, user }) {
                     </div>
                 </div>
             </div>
-
-            {/* Logout Modal Confirmation */}
-            <Modal
-                isOpen={isModalOpen}
-                onClose={handleModalClose}
-                onConfirm={handleConfirmLogout}
-            />
         </>
     );
 }
