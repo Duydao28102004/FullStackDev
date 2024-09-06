@@ -9,7 +9,6 @@ const UserSchema = new Schema({
     groups: [{ type: Schema.Types.ObjectId, ref: 'Group' }],
     posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
     comments: [{ type: Schema.Types.ObjectId, ref: 'Comment' }],
-    reactions: [{ type: Schema.Types.ObjectId, ref: 'Reaction' }],
     notifications: [{ type: Schema.Types.ObjectId, ref: 'Notification' }],
 });
 

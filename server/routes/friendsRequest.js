@@ -122,7 +122,7 @@ router.post('/api/friendsRequest/acceptRequest', async (req, res) => {
         receiver.friends.push(senderid);
 
         // Remove the friend request notification
-        await existingRequest.remove();
+        await Notification.deleteOne({ _id: existingRequest._id });
 
         // Save the updated users
         await sender.save();
@@ -133,6 +133,64 @@ router.post('/api/friendsRequest/acceptRequest', async (req, res) => {
         console.error('Error accepting friend request:', error);
         res.status(500).json({ error: 'Server error' });
     }   
+});
+
+router.post('/api/friendsRequest/rejectRequest', async (req, res) => {
+    try {
+        const { senderid, receiverid } = req.body;
+
+        // Check if the sender and receiver exist
+        const sender = await User.findById(senderid);
+        const receiver = await User.findById(receiverid);
+        if (!sender || !receiver) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if the sender has already sent a request to the receiver
+        const existingRequest = await Notification.findOne({ sender: senderid, receiver: receiverid, type: 'friendRequest' });
+        if (!existingRequest) {
+            return res.status(400).json({ error: 'Request not found' });
+        }
+
+        // Remove the friend request notification
+        await Notification.deleteOne({ _id: existingRequest._id });
+
+        res.status(200).json({ message: 'Friend request rejected' });
+    } catch (error) {
+        console.error('Error rejecting friend request:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+
+router.post('/api/friendsRequest/deleteFriend', async (req, res) => {
+    try {
+        const { userid, friendid } = req.body;
+
+        // Check if the user and friend exist
+        const user = await User.findById(userid);
+        const friend = await User.findById(friendid);
+        if (!user || !friend) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Check if the user and friend are already friends
+        if (!user.friends.includes(friendid) || !friend.friends.includes(userid)) {
+            return res.status(400).json({ error: 'Not friends' });
+        }
+
+        // Remove the friend from each user's friends list
+        user.friends.pull(friendid);
+        friend.friends.pull(userid);
+
+        // Save the updated users
+        await user.save();
+        await friend.save();
+
+        res.status(200).json({ message: 'Friend deleted' });
+    } catch (error) {
+        console.error('Error deleting friend:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
 });
 
 module.exports = router;
