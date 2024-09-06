@@ -1,14 +1,33 @@
 import React from 'react';
+import { useSession } from '../LoginData';
+import axios from 'axios';
 
-export default function FriendRequestCard({ username, avatar }) {
+export default function FriendRequestCard({ senderid, username, avatar, onRequestHandled }) {
+    const { userData } = useSession();
 
-    const handleAccept = () => {
-        console.log('Accepting friend request');
-    }
+    const handleAccept = async () => {
+        try {
+            await axios.post('http://localhost:3001/api/friendsRequest/acceptRequest', {
+                senderid: senderid,
+                receiverid: userData.userid
+            });
+            onRequestHandled(senderid); // Remove the request from the UI
+        } catch (error) {
+            console.error("Error accepting request:", error);
+        }
+    };
 
-    const handleReject = () => {
-        console.log('Rejecting friend request');
-    }
+    const handleReject = async () => {
+        try {
+            await axios.post('http://localhost:3001/api/friendsRequest/rejectRequest', {
+                senderid: senderid,
+                receiverid: userData.userid
+            });
+            onRequestHandled(senderid); // Remove the request from the UI
+        } catch (error) {
+            console.error("Error rejecting request:", error);
+        }
+    };
 
     return (
         <div className='flex flex-col border border-1 rounded-lg mr-8'>

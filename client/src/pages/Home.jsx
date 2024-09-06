@@ -5,6 +5,7 @@ import Post from '../components/Post';
 import { useSession } from '../LoginData';
 import axios from 'axios';
 import WritePost from '../components/WritePost';
+import FriendRequestCard from '../components/FriendRequestCard';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -13,18 +14,21 @@ const Home = () => {
     const { userData } = useSession();
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
+    const [friendsRequests, setFriendsRequests] = useState([]);
 
     // Load data only if not cached
     useEffect(() => {
         const fetchUserDataAndPosts = async () => {
-            if (!user && !posts.length) { // Only fetch if user or posts are not already loaded
+            if (!user && !posts.length && !friendsRequests.length) { // Only fetch if user or posts are not already loaded
                 try {
-                    const [userResponse, postsResponse] = await Promise.all([
+                    const [userResponse, postsResponse, friendsRequestResponse] = await Promise.all([
                         axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`),
                         axios.get('http://localhost:3001/api/posts/getPosts'),
+                        axios.get(`http://localhost:3001/api/friendsRequest/getRequests?userid=${userData.userid}`),
                     ]);
                     setUser(userResponse.data);
                     setPosts(postsResponse.data);
+                    setFriendsRequests(friendsRequestResponse.data);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }
@@ -35,7 +39,13 @@ const Home = () => {
         if (userData.userid) {
             fetchUserDataAndPosts(); // Fetch only if data not present
         }
-    }, [checkAuth, userData.userid, user, posts.length]);
+    }, [checkAuth, userData.userid, user, posts.length, friendsRequests.length]);
+
+    // Function to handle request after acceptance or rejection
+    const handleRequestHandled = (senderId) => {
+        // Filter out the friend request that was handled
+        setFriendsRequests(friendsRequests.filter(request => request.sender._id !== senderId));
+    };
 
     const renderMainContent = () => {
         if (!user) {
@@ -77,7 +87,28 @@ const Home = () => {
                     </>
                 );
             case 'Friends':
-                return "Friends";
+                return(
+                    <>
+                    {friendsRequests.length > 0 ? (
+                        <div>
+                            <h1 className="font-bold text-lg text-center px-2 py-2">Friends</h1>
+                            <div className="flex flex-wrap justify-center">
+                                {friendsRequests.map((friendsRequest) => (
+                                    <FriendRequestCard 
+                                        key={friendsRequest.sender._id}
+                                        senderid={friendsRequest.sender._id}
+                                        username={friendsRequest.sender.username}
+                                        avatar={friendsRequest.sender.avatar}
+                                        onRequestHandled={handleRequestHandled} // Pass the handler
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <p>No friend request pending</p>
+                    )}
+                    </>
+                );
             case 'User Profile':
                 return "User Profile";
             default:
@@ -114,7 +145,7 @@ const Home = () => {
                                     >
                                         <div className="h-12 w-12">
                                             <img 
-                                                src={friend.avatar || '/default-avatar.png'}  // Fallback to default avatar
+                                                src={friend.avatar}  // Fallback to default avatar
                                                 alt={friend.username}
                                                 className="h-full w-full rounded-full object-cover"
                                             />
