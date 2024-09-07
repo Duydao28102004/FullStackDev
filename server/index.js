@@ -11,6 +11,7 @@ const post = require('./routes/post');
 const reaction = require('./routes/reaction');
 const friendsRequest = require('./routes/friendsRequest');
 const comment = require('./routes/comment');
+const search = require('./routes/search');
 
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
@@ -29,6 +30,7 @@ app.use('/', post);
 app.use('/', reaction);
 app.use('/', friendsRequest);
 app.use('/', comment);
+app.use('/', search);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);

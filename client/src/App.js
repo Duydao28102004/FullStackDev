@@ -3,15 +3,14 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import UserDetail from './pages/UserDetail'
-import Group from './pages/Group'
-import Navbar from './components/Navbar';
+import Group from './pages/Group';
+import Search from './pages/Search';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
       <div className="pages">
-        <Navbar/>
         <Routes>
             <Route 
               path="/"
@@ -33,6 +32,10 @@ function App() {
               path="/group"
               element={<Group/>}
             />
+            <Route
+            path="/search"
+            element={<Search/>}
+          />
         </Routes>
       </div>     
       </BrowserRouter>

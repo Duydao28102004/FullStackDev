@@ -6,6 +6,7 @@ import { useSession } from '../LoginData';
 import axios from 'axios';
 import WritePost from '../components/WritePost';
 import FriendRequestCard from '../components/FriendRequestCard';
+import Navbar from '../components/Navbar';
 import { Link } from 'react-router-dom';
 
 const Home = () => {
@@ -113,14 +114,14 @@ const Home = () => {
                     )}
                     </>
                 );
-            case 'User Profile':
-                return "User Profile";
             default:
                 return <div>Select an option from the left navigation</div>;
         }
     };
     
     return (
+    <>
+    <Navbar/>
     <div className='flex h-[92%] w-screen'>
         {/* Left-side Navigation */}
         <div className='sticky top-0 h-screen w-[20%]'>
@@ -128,7 +129,7 @@ const Home = () => {
         </div>
 
         {/* Main Content */}
-        <div className='flex flex-col h-full py-4 px-0 w-[80%] mx-auto overflow-y-auto'>
+        <div className='flex flex-col h-full py-10 px-0 w-[80%] mx-auto overflow-y-auto'>
             {renderMainContent()}
         </div>
 
@@ -169,6 +170,7 @@ const Home = () => {
             </div>
         </div>
     </div>
+    </>
 );
     
 };

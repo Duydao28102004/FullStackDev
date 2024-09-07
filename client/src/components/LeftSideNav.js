@@ -42,18 +42,10 @@ export default function LeftSideNav({ onSelectContent }) {
                         onClick={() => { handleButtonClick("Home") }}
                         className={getButtonClassName("Home")}
                     />
-
-                    {/* User Profile Navigation */}
-                    <IconButton
-                        icon="/assets/user.svg"
-                        text="User Profile"
-                        onClick={() => { handleButtonClick("User Profile") }}
-                        className={getButtonClassName("User Profile")}
-                    />
                     {/* Friends List Navigation */}
                     <IconButton
                         icon="/assets/friends.svg"
-                        text="Friends"
+                        text="Friends Request"
                         onClick={() => { handleButtonClick("Friends") }}
                         className={getButtonClassName("Friends")}
                     />

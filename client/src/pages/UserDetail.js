@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import WritePost from '../components/WritePost';
 import LeftPanel from '../components/LeftPanel';
 import Post from '../components/Post';
+import Navbar from '../components/Navbar';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSession } from '../LoginData';
@@ -118,6 +119,8 @@ const UserDetail = () => {
   }
 
   return (
+    <>
+    <Navbar/>
     <div>
       <section className="py-8 px-6">
         <div className="bg-[#DBE2EF] rounded-lg shadow-2xl py-2 ml-20 mr-20">
@@ -210,6 +213,7 @@ const UserDetail = () => {
         </div>
       </div>
     </div>
+    </>
   );
 }
 
