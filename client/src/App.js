@@ -4,12 +4,14 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import UserDetail from './pages/UserDetail'
 import Group from './pages/Group'
+import Navbar from './components/Navbar';
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
       <div className="pages">
+        <Navbar/>
         <Routes>
             <Route 
               path="/"

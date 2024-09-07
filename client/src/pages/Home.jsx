@@ -19,7 +19,8 @@ const Home = () => {
     // Load data only if not cached
     useEffect(() => {
         const fetchUserDataAndPosts = async () => {
-            if (!user && !posts.length && !friendsRequests.length) { // Only fetch if user or posts are not already loaded
+            if (!user && !posts.length && !friendsRequests.length) {
+                // Only fetch if user or posts are not already loaded
                 try {
                     const [userResponse, postsResponse, friendsRequestResponse] = await Promise.all([
                         axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`),
@@ -59,11 +60,14 @@ const Home = () => {
             case 'Home':
                 // Filter posts: show either public posts or posts from friends
                 const filteredPosts = posts
-                .filter(
-                    post => post.visibility === 'public' || friendIds.includes(post.author._id)
-                )
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by newest first
-                ;
+                    .filter(
+                        post => 
+                        post.visibility === 'public' || 
+                        friendIds.includes(post.author._id) || 
+                        post.author._id === userData.userid // Show if the post is from the current user
+                    )
+                    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by newest first
+
                 
                 return (
                     <>
@@ -117,55 +121,56 @@ const Home = () => {
     };
     
     return (
-        <div className='flex w-full h-screen pl-4'>
-            {/* Left-side Navigation */}
-            <div className='sticky top-0 h-screen w-[20%]'>
-                <LeftSideNav onSelectContent={setSelectedContent} user={user || { avatar: '', username: '' }} /> 
-            </div>
+    <div className='flex h-[92%] w-screen'>
+        {/* Left-side Navigation */}
+        <div className='sticky top-0 h-screen w-[20%]'>
+            <LeftSideNav onSelectContent={setSelectedContent} user={user || { avatar: '', username: '' }} /> 
+        </div>
 
-            {/* Main Content */}
-            <div className='flex flex-col h-full py-4 px-0 w-[80%] mx-auto overflow-y-auto'>
-                {renderMainContent()}
-            </div>
+        {/* Main Content */}
+        <div className='flex flex-col h-full py-4 px-0 w-[80%] mx-auto overflow-y-auto'>
+            {renderMainContent()}
+        </div>
 
-            {/* Right-side Navigation (Friends List) */}
-            <div className='sticky top-0 h-screen pr-4 pl-4 w-[20%]'>
-                <div className="flex flex-col w-full h-screen bg-gray-200 py-4 overflow-y-auto">
-                    <div className="flex justify-between mx-2">
-                        <h1 className="font-bold text-lg text-center px-2 py-2">
-                            Friends List
-                        </h1>
-                    </div>
-                    <div>
-                        {user && user.friends && user.friends.length > 0 ? (
-                            user.friends.map((friend) => (
-                                <Link to={`/user/${friend._id}`} key={friend._id}> {/* Use Link to navigate */}
-                                    <div 
-                                        className="flex items-center justify-start py-2 px-2 mx-2 cursor-pointer hover:bg-gray-300 hover:rounded-lg"
-                                    >
-                                        <div className="h-12 w-12">
-                                            <img 
-                                                src={friend.avatar}  // Fallback to default avatar
-                                                alt={friend.username}
-                                                className="h-full w-full rounded-full object-cover"
-                                            />
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <p className="text-base font-semibold px-2">
-                                                {friend.username}
-                                            </p>
-                                        </div>
+        {/* Right-side Navigation (Friends List) */}
+        <div className='sticky top-0 h-screen pl-4 w-[20%]'>
+            <div className="flex flex-col w-full h-[85%] bg-gray-200 py-4 mt-12 overflow-y-auto">
+                <div className="flex justify-between mx-2">
+                    <h1 className="font-bold text-lg text-center px-2 py-2">
+                        Friends List
+                    </h1>
+                </div>
+                <div>
+                    {user && user.friends && user.friends.length > 0 ? (
+                        user.friends.map((friend) => (
+                            <Link to={`/user/${friend._id}`} key={friend._id}>
+                                <div 
+                                    className="flex items-center justify-start py-2 px-2 mx-2 cursor-pointer hover:bg-gray-300 hover:rounded-lg"
+                                >
+                                    <div className="h-12 w-12">
+                                        <img 
+                                            src={friend.avatar} 
+                                            alt={friend.username}
+                                            className="h-full w-full rounded-full object-cover"
+                                        />
                                     </div>
-                                </Link>
-                            ))
-                        ) : (
-                            <p className="text-center text-gray-500">No friends found.</p>
-                        )}
-                    </div>
+                                    <div className="flex flex-col">
+                                        <p className="text-base font-semibold px-2">
+                                            {friend.username}
+                                        </p>
+                                    </div>
+                                </div>
+                            </Link>
+                        ))
+                    ) : (
+                        <p className="text-center text-gray-500">No friends found.</p>
+                    )}
                 </div>
             </div>
         </div>
-    );
+    </div>
+);
+    
 };
 
 export default Home;

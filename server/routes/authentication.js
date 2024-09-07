@@ -30,7 +30,7 @@ router.post('/api/login', async (req, res) => {
         if (!validPassword) {
             return res.status(401).json({error: 'Password is incorrect.'});
         }
-        res.json({userid: user._id});
+        res.json({userid: user._id, username: user.username, avatar: user.avatar});
     } catch (err) {
         res.json({message: err});
     }

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import axios from "axios";
 import { useSession } from "../LoginData";
 
-const PostDetailModal = ({ avatar, name, publishedDate, content, images, onClose, postId, reactions }) => {
+const PostDetailModal = ({ avatar, name, publishedDate, content, images, onClose, postId, reactions}) => {
     const [newComment, setNewComment] = useState(""); // State to manage new comment input
     const [modalComments, setModalComments] = useState([]); // Local state for comments to manage updates
     const [reactionCounts, setReactionCounts] = useState({}); // State to manage reaction counts
@@ -72,7 +72,7 @@ const PostDetailModal = ({ avatar, name, publishedDate, content, images, onClose
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-4 rounded-md max-w-lg w-full h-[70%] relative">
+            <div className="bg-white p-4 rounded-md max-w-lg w-full h-[80%] relative">
                 <button
                     className="absolute top-2 right-2 text-gray-500"
                     onClick={onClose}

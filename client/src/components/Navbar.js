@@ -1,13 +1,17 @@
 import React from "react";
-
+import { useSession } from "../LoginData";
+import { Link } from "react-router-dom";
 const Navbar = () => {
+    const { userData } = useSession();
     return (
-      <nav className="shadow-md"> 
+      <nav className="shadow-md my-5 h-[5%]"> 
         <div className="w-[100%] px-4 py-4 flex items-center justify-between bg-[#DBE2EF] shadow-lg">
           
-          <div className="flex items-center pl-20">
-            <img src="" alt="Logo" className="h-10 w-[100%] mr-2" />
-          </div>
+          <Link to="/">
+            <div className="flex items-center pl-20">
+              <img src="" alt="Logo" className="h-10 w-[100%] mr-2" />
+            </div>
+          </Link>
           
           {/* Search Bar */}
           <div className="flex-grow mx-20">
@@ -37,16 +41,19 @@ const Navbar = () => {
           <div className="flex items-center space-x-16 pr-20">
             
             {/* User Icon and Name */}
-            <div className="flex items-center space-x-2">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-              </svg>
-  
-              <div className="text-gray-700 font-medium">
-                <span>User A</span>
-                <span className="text-sm text-gray-500 block">@UserA</span>
+            <Link to={`/user/${userData.userid}`}>
+              <div className="flex items-center space-x-2">
+                <img
+                  src={userData.avatar}
+                  alt="User Avatar"
+                  className="w-12 h-12 rounded-full"
+                />
+    
+                <div className="text-gray-700 font-medium">
+                  <span>{userData.username}</span>
+                </div>
               </div>
-            </div>
+            </Link>
             
             <div className="flex items-center space-x-6">
                 {/* Settings Button */}

@@ -4,7 +4,7 @@ import IconButton from "./IconButton";
 import { useNavigate } from "react-router-dom";
 import { useSession } from "../LoginData";
 
-export default function LeftSideNav({ onSelectContent, user }) {
+export default function LeftSideNav({ onSelectContent }) {
     const { deleteUserData } = useSession();  // Adjusted to object destructuring
     const [selectedButton, setSelectedButton] = useState("Home");
     const navigate = useNavigate();
@@ -32,17 +32,9 @@ export default function LeftSideNav({ onSelectContent, user }) {
 
     return (
         <>
-            <div className="flex flex-col justify-between py-4 bg-gray-200 h-screen sticky overflow-y-auto">
+            <div className="flex flex-col justify-between py-4 mt-12 bg-gray-200 h-[85%] sticky overflow-y-auto">
                 {/* Upper Part of the Side Navigation */}
                 <div>
-                    <div className="flex items-center ml-2 my-4">
-                        <img
-                            src={user.avatar}
-                            alt="User Avatar"
-                            className="w-16 h-16 rounded-full"
-                        />
-                        <p class="text-xl ml-[4%]">Welcome back, {user.username}</p>
-                    </div>
                     {/* Home Page Navigation == Refresh The Feed */}
                     <IconButton
                         icon="/assets/home.svg"

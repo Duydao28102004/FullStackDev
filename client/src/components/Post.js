@@ -2,16 +2,17 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import PropTypes from 'prop-types';
 import IconButton from "./IconButton";
-import DropdownMenu from "./DropDownMenu";
 import ReactionMenu from "./ReactionMenu"; // Import the ReactionMenu component
 import { useSession } from "../LoginData";
 import { Link } from "react-router-dom";
 import PostDetailModal from "./PostDetailModal"; // Import the PostDetailModal component
+import EditPostModal from "./EditPostModal"; // Import the EditPostModal component
 
-export default function Post({ avatar, name, publishedDate, content, images, postId, userId }) {
+export default function Post({ avatar, name, publishedDate, content, images, postId, userId, visibility }) {
     const [reaction, setReaction] = useState(""); // State to manage the reaction
     const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
     const [isReactionMenuOpen, setIsReactionMenuOpen] = useState(false); // State to manage reaction menu visibility
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false); // State to manage the edit modal
     const [comments] = useState([]); // State to manage comments
     const [reactions, setReactions] = useState([]); // State to manage reactions
     const [isDetailModalOpen, setIsDetailModalOpen] = useState(false); // State to manage the detailed view modal
@@ -80,6 +81,19 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
         setIsDetailModalOpen(!isDetailModalOpen);
     };
 
+    const toggleEditModal = () => setIsEditModalOpen(!isEditModalOpen);
+
+
+    const handleDeletePost = async () => {
+        try {
+            await axios.delete(`http://localhost:3001/api/posts/deletePost/${postId}`);
+            // You may want to refresh the post list after deletion
+            console.log('Post deleted');
+        } catch (error) {
+            console.error('Error deleting post:', error);
+        }
+    };
+
     return (
         <div className="relative flex flex-col w-[70%] py-2 px-4 mx-auto my-2 bg-gray-300 rounded-md">
             {/* User's Post Avatar, Name, and Post Editing Section */}
@@ -112,7 +126,26 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                         ...
                     </button>
                     {isDropdownOpen && (
-                        <DropdownMenu />
+                        userData.userid === userId && ( // Show "Edit" and "Delete" options only if the current user is the post author
+                            <>
+                                <div className="absolute right-0 mt-12 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                                    <ul>
+                                        <li
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            onClick={toggleEditModal}
+                                        >
+                                            Edit
+                                        </li>
+                                        <li
+                                            className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                                            onClick={handleDeletePost}
+                                        >
+                                            Delete
+                                        </li>
+                                    </ul>
+                                </div>
+                            </>
+                        )
                     )}
                 </div>
             </div>
@@ -165,6 +198,16 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
                     onClose={toggleDetailModal}
                     postId={postId}
                     reactions={reactions}
+                    userId={userId}
+                />
+            )}
+
+            {isEditModalOpen && (
+                <EditPostModal
+                    postId={postId}
+                    content={content}
+                    images={images}
+                    onClose={toggleEditModal}
                 />
             )}
         </div>

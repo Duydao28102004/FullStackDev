@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import WritePost from '../components/WritePost';
-import Navbar from '../components/Navbar';
 import LeftPanel from '../components/LeftPanel';
-import Settings from '../components/Settings';
 import Post from '../components/Post';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -18,33 +16,43 @@ const UserDetail = () => {
   const { userData } = useSession();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      if (userData && userData.userid) {
-        try {
-          const response = await axios.get(`http://localhost:3001/api/getUser?userid=${userid}`);
-          setUser(response.data);
-          console.log(response.data);
-          const responsePosts = await axios.get('http://localhost:3001/api/posts/getPosts');
-          setPosts(responsePosts.data);
-          const checkFriend = await axios.get(`http://localhost:3001/api/friendsRequest/checkRequest?senderid=${userData.userid}&receiverid=${userid}`);
-          if (checkFriend.data.friend) {
-            setFriend(true);
-          }
-          if (checkFriend.data.requestSent) {
-            setRequestSent(true);
-          }
-          if (checkFriend.data.reverse) {
-            setReverse(true);
-          }
-          console.log(checkFriend.data);
-        } catch (error) {
-          console.error('Error fetching user or posts:', error);
+    const fetchUserAndPosts = async () => {
+        if (userData && userData.userid) {
+            try {
+                // Define all the API calls as promises
+                const userPromise = axios.get(`http://localhost:3001/api/getUser?userid=${userid}`);
+                const postsPromise = axios.get('http://localhost:3001/api/posts/getPosts');
+                const checkFriendPromise = axios.get(`http://localhost:3001/api/friendsRequest/checkRequest?senderid=${userData.userid}&receiverid=${userid}`);
+
+                // Wait for all promises to resolve
+                const [userResponse, postsResponse, checkFriendResponse] = await Promise.all([userPromise, postsPromise, checkFriendPromise]);
+
+                // Set the state with the resolved data
+                setUser(userResponse.data);
+                setPosts(postsResponse.data);
+
+                // Check friend status
+                if (checkFriendResponse.data.friend) {
+                    setFriend(true);
+                }
+                if (checkFriendResponse.data.requestSent) {
+                    setRequestSent(true);
+                }
+                if (checkFriendResponse.data.reverse) {
+                    setReverse(true);
+                }
+
+                // Optional: Log responses for debugging
+                console.log(userResponse.data);
+                console.log(checkFriendResponse.data);
+            } catch (error) {
+                console.error('Error fetching user or posts:', error);
+            }
         }
-      }
     };
 
-    fetchUser();
-  }, [userid, userData]);
+    fetchUserAndPosts();
+}, [userid, userData]);
 
   // Filter posts authored by the current user
   const userPosts = posts.filter(post => post.author._id === userid);
@@ -111,7 +119,6 @@ const UserDetail = () => {
 
   return (
     <div>
-      <Navbar />
       <section className="py-8 px-6">
         <div className="bg-[#DBE2EF] rounded-lg shadow-2xl py-2 ml-20 mr-20">
           <div className="flex justify-between items-center max-w-1xl mx-auto p-16 ">
@@ -202,7 +209,6 @@ const UserDetail = () => {
           ))}
         </div>
       </div>
-      <Settings />
     </div>
   );
 }
