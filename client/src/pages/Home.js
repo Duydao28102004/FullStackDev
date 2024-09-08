@@ -8,6 +8,7 @@ import WritePost from '../components/WritePost';
 import FriendRequestCard from '../components/FriendRequestCard';
 import Navbar from '../components/Navbar';
 import { Link } from 'react-router-dom';
+import CreateGroupModal from '../components/CreateGroupModal';
 
 const Home = () => {
     const [selectedContent, setSelectedContent] = useState('Home');
@@ -16,6 +17,9 @@ const Home = () => {
     const [user, setUser] = useState(null);
     const [posts, setPosts] = useState([]);
     const [friendsRequests, setFriendsRequests] = useState([]);
+    const [showCreateGroupModal, setShowCreateGroupModal] = useState(false); // Add state to control modal visibility
+    const [adminGroups, setAdminGroups] = useState([]);
+    const [memberGroups, setMemberGroups] = useState([]);
 
     // Load data only if not cached
     useEffect(() => {
@@ -23,14 +27,18 @@ const Home = () => {
             if (!user && !posts.length && !friendsRequests.length) {
                 // Only fetch if user or posts are not already loaded
                 try {
-                    const [userResponse, postsResponse, friendsRequestResponse] = await Promise.all([
+                    const [userResponse, postsResponse, friendsRequestResponse, groupsResponse] = await Promise.all([
                         axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`),
                         axios.get('http://localhost:3001/api/posts/getPosts'),
                         axios.get(`http://localhost:3001/api/friendsRequest/getRequests?userid=${userData.userid}`),
+                        axios.get(`http://localhost:3001/api/groups/getGroups?userid=${userData.userid}`)
                     ]);
                     setUser(userResponse.data);
                     setPosts(postsResponse.data);
                     setFriendsRequests(friendsRequestResponse.data);
+                    // Use optional chaining and default to empty arrays
+                    setAdminGroups(groupsResponse.data?.adminGroups || []);
+                    setMemberGroups(groupsResponse.data?.memberGroups || []);
                 } catch (error) {
                     console.error('Error fetching data:', error);
                 }
@@ -47,6 +55,12 @@ const Home = () => {
     const handleRequestHandled = (senderId) => {
         // Filter out the friend request that was handled
         setFriendsRequests(friendsRequests.filter(request => request.sender._id !== senderId));
+    };
+
+    // Function to handle group creation
+    const handleGroupCreated = (group) => {
+        console.log('Group created:', group);
+        setShowCreateGroupModal(false); // Close modal after creation
     };
 
     const renderMainContent = () => {
@@ -114,6 +128,74 @@ const Home = () => {
                     )}
                     </>
                 );
+                case 'Groups':
+                
+                    return (
+                        <div className="w-[90%] mt-4 mx-auto">
+                            {/* Create a Group Button (visible to everyone) */}
+                            <div className="text-right mb-4">
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                                    onClick={() => setShowCreateGroupModal(true)} // Open modal on click
+                                >
+                                    Create Group
+                                </button>
+                                
+                            </div>
+                            {showCreateGroupModal && (
+                                <CreateGroupModal 
+                                    onClose={() => setShowCreateGroupModal(false)} 
+                                    onGroupCreated={handleGroupCreated}
+                                />
+                            )}
+                
+                            {/* Groups You Manage */}
+                            <div className="mb-6">
+                                <h1 className="font-bold text-lg text-center px-2 py-2">Groups You Manage</h1>
+                                {adminGroups.length > 0 ? (
+                                    adminGroups.map((group) => (
+                                        <div
+                                            key={group._id}
+                                            className="flex items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300"
+                                        >
+                                            <Link to={`/group/${group._id}`} className="text-blue-600 font-semibold">
+                                                {group.name}
+                                            </Link>
+                                            <span className="text-sm text-gray-600">Admin</span>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-gray-500">You are not managing any groups.</p>
+                                )}
+                            </div>
+                
+                            {/* Groups You Are a Member of */}
+                            <div>
+                                <h1 className="font-bold text-lg text-center px-2 py-2">Groups You Are a Member of</h1>
+                                <div className='flex w-full'>
+                                    {memberGroups.length > 0 ? (
+                                        memberGroups.map((group) => (
+                                            <Link to={`/group/${group._id}`}>
+                                                <div className="flex w-[70%] mx-auto items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300">
+                                                    <p className="text-blue-600 font-semibold">
+                                                        {group.name}
+                                                    </p>
+                                                    {group.approved ? (
+                                                        <span className="text-green-500">Approved</span>
+                                                    ) : (
+                                                        <span className="text-red-500">Pending</span>
+                                                    )}
+                                                    <span className="text-sm text-gray-600">Member</span>
+                                                </div>  
+                                            </Link>
+                                        ))
+                                    ) : (
+                                        <p className="text-center text-gray-500">You are not a member of any groups.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    );
             default:
                 return <div>Select an option from the left navigation</div>;
         }
