@@ -5,6 +5,7 @@ import Register from './pages/Register';
 import UserDetail from './pages/UserDetail'
 import Group from './pages/Group';
 import Search from './pages/Search';
+import Admin from './pages/Admin';
 
 function App() {
   return (
@@ -35,6 +36,10 @@ function App() {
             <Route
             path="/search"
             element={<Search/>}
+          />
+          <Route 
+            path="/admin"
+            element={<Admin />}
           />
         </Routes>
       </div>     

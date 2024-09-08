@@ -23,11 +23,11 @@ const Navbar = () => {
   return (
     <nav className="shadow-md my-5 h-[5%]">
       <div className="w-[100%] px-4 py-4 flex items-center justify-between bg-[#DBE2EF] shadow-lg">
-        <Link to="/">
-          <div className="flex items-center pl-20">
-            <img src="" alt="Logo" className="h-10 w-[100%] mr-2" />
-          </div>
-        </Link>
+        <div className="flex items-center space-x-16">
+          <Link to="/">
+            <h1 className="text-xl font-bold text-blue-600">SocialPulse</h1>
+          </Link>
+        </div>
 
         {/* Search Bar */}
         <div className="flex-grow mx-20">

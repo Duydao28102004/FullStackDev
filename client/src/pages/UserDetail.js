@@ -6,8 +6,10 @@ import Navbar from '../components/Navbar';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useSession } from '../LoginData';
+import CheckAuth from '../CheckAuth';
 
 const UserDetail = () => {
+  const checkAuth = CheckAuth();
   const { userid } = useParams();
   const [user, setUser] = useState({});
   const [posts, setPosts] = useState([]);
@@ -51,9 +53,9 @@ const UserDetail = () => {
             }
         }
     };
-
+    checkAuth();
     fetchUserAndPosts();
-}, [userid, userData]);
+}, [userid, userData, checkAuth]);
 
   // Filter posts authored by the current user
   const userPosts = posts.filter(post => post.author._id === userid);

@@ -5,9 +5,12 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSession } from '../LoginData'; // Import if needed
 import WritePost from '../components/WritePost'; // Import if you want to show posts
+import CheckAuth from '../CheckAuth';
+
 
 const Group = () => {
   const { groupid } = useParams();
+  const checkAuth = CheckAuth();
   const [group, setGroup] = useState({});
   const [posts, setPosts] = useState([]);
   const [requestSent, setRequestSent] = useState(false);
@@ -28,7 +31,6 @@ const Group = () => {
           const memberPromise = axios.get(`http://localhost:3001/api/groups/getGroupRequest?userid=${userData.userid}&groupid=${groupid}`);
           const [postsResponse, userResponse, groupResponse, memberRespone] = await Promise.all([postsPromise, userPromise, groupPromise, memberPromise]);
 
-          setPosts(postsResponse.data);
           setUser(userResponse.data);
 
           if (groupResponse.data.members.includes(userData.userid)) {
@@ -43,6 +45,15 @@ const Group = () => {
           }
 
           setGroup(groupResponse.data);
+          console.log(groupResponse.data)
+          // Check if the group is private and if the user is a member
+          if (groupResponse.data.visibility === 'private' && groupResponse.data.members.includes(userData.userid)) {
+            setPosts(postsResponse.data);
+          } else if (groupResponse.data.visibility === 'public') {
+            setPosts(postsResponse.data);
+          } else {
+            setPosts([]);
+          }
 
           if (memberRespone.data.member) {
             setMember(true);
@@ -56,12 +67,12 @@ const Group = () => {
         }
       }
     };
-
+    checkAuth();
     fetchGroupAndPosts();
-  }, [groupid, userData, requestSent]);
+  }, [groupid, userData, requestSent, checkAuth]);
 
   const handleJoinGroup = async () => {
-    const response = await axios.post('http://localhost:3001/api/groups/joinGroupRequest', {
+    await axios.post('http://localhost:3001/api/groups/joinGroupRequest', {
       userid: userData.userid,
       groupid
     });
@@ -69,15 +80,16 @@ const Group = () => {
   };
 
   const handleLeaveGroup = async () => {
-    const response = await axios.post('http://localhost:3001/api/groups/leaveGroup', {
+    await axios.post('http://localhost:3001/api/groups/leaveGroup', {
       userid: userData.userid,
       groupid
     });
     setMember(false);
+    window.location.reload()
   };
 
   const handleCancelRequest = async () => {
-    const response = await axios.post('http://localhost:3001/api/groups/rejectGroupRequest', {
+    await axios.post('http://localhost:3001/api/groups/rejectGroupRequest', {
       userid: userData.userid,
       groupid
     });
@@ -91,6 +103,7 @@ const Group = () => {
         groupid 
       });
       setGroupRequests(GroupRequests.filter(request => request._id !== requestId));
+      window.location.reload()
     } catch (error) {
       console.error('Error accepting request:', error);
     }
@@ -124,10 +137,12 @@ const Group = () => {
                   <div>
                     <span className="text-gray-700 font-medium text-lg block">{group.name}</span>
                     <span className="text-sm text-gray-500 block">{group.members ? group.members.length : 0} members</span>
+                    <span className="text-sm text-gray-500 block">{group.visibility}</span>
+                    <span className="text-sm text-gray-500 block">{group.description}</span>
                   </div>
                 </div>
               </div>
-              {!isAdmin && (
+              {group.approved && !isAdmin && (
                 member ? (
                   <div>
                     <button onClick={handleLeaveGroup} className="flex flex-row bg-[#3F72AF] hover:bg-blue-600 font-medium py-2 px-8 rounded-lg">
@@ -151,7 +166,9 @@ const Group = () => {
             </div>
           </div>
         </section>
-        <div className="flex px-2 py-8 mx-12 mr-20">
+        {/* Check if the group is pending approval */}
+        {group.approved ? (
+          <div className="flex px-2 py-8 mx-12 mr-20">
           <section className="py-2 px-4 ml-16 mr-8 w-[25%]">
             <div className="w-[90%] rounded-lg shadow-lg">
               {member && (
@@ -168,6 +185,36 @@ const Group = () => {
                   )}
                 </div>
               )}
+
+              {/* Group Members Section */}
+              <div className="bg-white p-4 rounded-lg shadow h-48 overflow-y-auto">
+                <h3 className="text-lg font-semibold mb-2">Group Members</h3>
+                <div className="space-y-2">
+                  {group.visibility === "public" ? (
+                    group.members && group.members.map(member => (
+                      <div key={member._id} className="flex items-center space-x-2">
+                        <img src={member.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+                        <span>{member.username}</span>
+                      </div>
+                    ))
+                  ) : (
+                    member || isAdmin ? (
+                      group.member ? (
+                        group.members.map(member => (
+                          <div key={member._id} className="flex items-center space-x-2">
+                            <img src={member.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+                            <span>{member.username}</span>
+                          </div>
+                        ))
+                      ) : (
+                        <p>no member yet</p> 
+                      )
+                    ):(
+                      <p>you have no permission to see member list</p>
+                    )
+                  )}
+                </div>
+              </div>
             </div>
           </section>
           <div className="flex-grow ml-8">
@@ -189,24 +236,52 @@ const Group = () => {
                 ))}
               </div>
             ) : (
-              <>
-              <WritePost user={user} groupid={groupid} />
-              {posts.map((post, index) => (    
-                  <Post
-                    key={index}
-                    avatar={post.author.avatar}
-                    name={post.author.username}
-                    publishedDate={post.createdAt}
-                    content={post.content}
-                    images={post.images}
-                    postId={post._id}
-                    userId={post.author._id}
-                  />
-              ))}
-              </>
+              
+              group.visibility === 'public' ? (
+                <>
+                <WritePost user={user} groupid={groupid} />
+                {posts.map((post, index) => (    
+                    <Post
+                      key={index}
+                      avatar={post.author.avatar}
+                      name={post.author.username}
+                      publishedDate={post.createdAt}
+                      content={post.content}
+                      images={post.images}
+                      postId={post._id}
+                      userId={post.author._id}
+                    />
+                ))}
+                </>
+              ) : (
+                isAdmin || member ? (
+                  <>
+                  <WritePost user={user} groupid={groupid} />
+                  {posts.map((post, index) => (    
+                    <Post
+                      key={index}
+                      avatar={post.author.avatar}
+                      name={post.author.username}
+                      publishedDate={post.createdAt}
+                      content={post.content}
+                      images={post.images}
+                      postId={post._id}
+                      userId={post.author._id}
+                    />
+                ))}
+                </>
+                ) : (
+                  <div>You have no permission to access this group</div>
+                )
+              )
             )}
           </div>
         </div>
+        ) : (
+          <div className="bg-red-100 text-red-600 p-4 rounded-md mx-20 my-4">
+            <p>This group is pending approval. It is not yet active.</p>
+          </div>
+        )}  
       </div>
     </>
   );

@@ -57,7 +57,7 @@ router.get('/api/groups/getGroups', async (req, res) => {
 router.get('/api/groups/getGroup', async (req, res) => {
     try {
         const { groupid } = req.query;
-        const group = await Group.findById(groupid);
+        const group = await Group.findById(groupid).populate('members');
         res.json(group);
     } catch (error) {
         console.error('Error getting group:', error);

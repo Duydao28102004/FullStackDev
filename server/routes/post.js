@@ -40,13 +40,15 @@ router.post('/api/posts/createPost', async (req, res) => {
 
 router.get('/api/posts/getPosts', async (req, res) => {
     try {
-        const posts = await Post.find().populate('author');
+        // Find posts that do not have a 'group' field
+        const posts = await Post.find({ group: { $exists: false } }).populate('author');
         res.status(200).json(posts);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Server error' });
     }
 });
+
 
 router.put('/api/posts/updatePost/:id', async (req, res) => {
     try {

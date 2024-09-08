@@ -3,9 +3,11 @@ import axios from 'axios';
 import Navbar from '../components/Navbar';
 import Post from '../components/Post';
 import { Link, useSearchParams } from 'react-router-dom';
+import CheckAuth from '../CheckAuth';
 
 export default function Search() {
   const [searchParams] = useSearchParams();
+  const checkAuth = CheckAuth();
   const [searchTerm, setSearchTerm] = useState('');
   const [searchResults, setSearchResults] = useState({
     users: [],
@@ -28,7 +30,8 @@ export default function Search() {
       setSearchTerm(query);
       fetchSearchResults();
     }
-  }, [searchParams]);
+    checkAuth();
+  }, [searchParams, checkAuth]);
   
 
   return (
@@ -91,9 +94,11 @@ export default function Search() {
           <div className="space-y-4">
             {searchResults.groups?.length > 0 ? (
               searchResults.groups.map(group => (
-                <div key={group._id} className="bg-white shadow-md rounded-lg p-4 hover:bg-gray-100 transition">
-                  <p className="text-gray-700">{group.name}</p>
-                </div>
+                <Link key={group._id} to={`/group/${group._id}`}>
+                  <div key={group._id} className="bg-white shadow-md rounded-lg p-4 hover:bg-gray-100 transition">
+                    <p className="text-gray-700">{group.name}</p>
+                  </div>
+                </Link>
               ))
             ) : (
               <p className="text-gray-500">No groups found</p>
