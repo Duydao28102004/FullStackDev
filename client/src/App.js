@@ -29,7 +29,7 @@ function App() {
               element={<UserDetail/>}
             />
             <Route
-              path="/group"
+              path="/group/:groupid"
               element={<Group/>}
             />
             <Route

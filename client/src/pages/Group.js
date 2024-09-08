@@ -1,91 +1,180 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import LeftGroupNav from '../components/LeftGroupNav'
-import WritePost from '../components/WritePost'
-import Settings from '../components/Settings'
-import Post from '../components/Post'
+import React, { useState, useEffect } from 'react';
+import Navbar from '../components/Navbar';
+import Post from '../components/Post'; // Import if you want to show posts
+import axios from 'axios';
+import { useParams } from 'react-router-dom';
+import { useSession } from '../LoginData'; // Import if needed
 
 const Group = () => {
-  const dummyPosts = [
-    {
-        author: {
-            avatar: '/client/public/assets/images/test-avatar.jpg',
-            username: 'John Doe',
-        },
-        createdAt: '2024-08-30T12:34:56Z',
-        content: 'This is the first dummy post content.',
-        images: ['path_to_image_1.jpg', 'path_to_image_2.jpg'],
-    },
-    {
-        author: {
-            avatar: '/client/public/assets/images/test-avatar.jpg',
-            username: 'Jane Smith',
-        },
-        createdAt: '2024-08-30T13:34:56Z',
-        content: 'This is the second dummy post content.',
-        images: [],
-    }
-];
+  const { groupid } = useParams();
+  const [group, setGroup] = useState({});
+  const [posts, setPosts] = useState([]);
+  const [requestSent, setRequestSent] = useState(false);
+  const [member, setMember] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // New state for admin check
+  const [showRequestButton, setShowRequestButton] = useState(false); // Toggle for admin
+  const { userData } = useSession();
+
+  useEffect(() => {
+    const fetchGroupAndPosts = async () => {
+      if (userData && userData.userid) {
+        try {
+          // Define all the API calls as promises
+          const groupPromise = axios.get(`http://localhost:3001/api/groups/getGroup?groupid=${groupid}`);
+          const memberPromise = axios.get(`http://localhost:3001/api/groups/getGroupRequest?userid=${userData.userid}&groupid=${groupid}`);
+          // Wait for all promises to resolve
+          const [groupResponse, memberRespone] = await Promise.all([groupPromise, memberPromise]);
+          console.log(memberRespone.data);
+          // Check if the user is a member of the group
+          if (groupResponse.data.members.includes(userData.userid)) {
+            setMember(true);
+          }
+
+          // Check if the user is an admin of the group
+          if (groupResponse.data.admins.includes(userData.userid)) {
+            setIsAdmin(true);
+            setShowRequestButton(true); // Admin can toggle between buttons
+          }
+
+          // Set the state with the resolved data
+          setGroup(groupResponse.data);
+
+
+          // Check membership status
+          if (memberRespone.data.member) {
+            setMember(true);
+          }
+          if (memberRespone.data.requestSent) {
+            setRequestSent(true);
+          }
+
+        } catch (error) {
+          console.error('Error fetching group or posts:', error);
+        }
+      }
+    };
+
+    fetchGroupAndPosts();
+  }, [groupid, userData, requestSent]);
+
+  const handleJoinGroup = async () => {
+    console.log('join group');
+    console.log(userData.userid, groupid);
+    const response = await axios.post('http://localhost:3001/api/groups/joinGroupRequest', {
+      userid: userData.userid,
+      groupid
+    });
+    console.log(response.data);
+    setRequestSent(true);
+  };
+
+  const handleLeaveGroup = async () => {
+    console.log('leave group');
+    console.log(userData.userid, groupid);
+    const response = await axios.post('http://localhost:3001/api/groups/leaveGroup', {
+      userid: userData.userid,
+      groupid
+    });
+    console.log(response.data);
+    setMember(false);
+  };
+
+  const handleCancelRequest = async () => {
+    console.log('cancel request');
+    console.log(userData.userid, groupid);
+    const response = await axios.post('http://localhost:3001/api/groups/rejectGroupRequest', {
+      userid: userData.userid,
+      groupid
+    });
+    console.log(response.data);
+    setRequestSent(false);
+  };
+
+  const toggleButton = () => {
+    setShowRequestButton(!showRequestButton);
+  };
 
   return (
-    <div>
-      <Navbar/>
-      <div className="flex px-2 py-8 mx-12 mr-20">
+    <>
+      <Navbar />
+      <div>
         <section className="py-8 px-6">
           <div className="bg-[#DBE2EF] rounded-lg shadow-2xl py-2 ml-20 mr-20">
-            <div className="flex justify-between items-center max-w-1xl mx-auto p-16 ">
-              {/*User Info */}
+            <div className="flex justify-between items-center max-w-1xl mx-auto p-16">
+              {/* Group Info */}
               <div className="flex items-center space-x-4">
-                {/* User Icon and Name */}
                 <div className="flex items-center space-x-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-12 h-12">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                  </svg>
-    
                   <div>
-                    <span className="text-gray-700 font-medium text-lg block">User A</span>
-                    <span className="text-sm text-gray-500 block">@UserA</span>
+                    <span className="text-gray-700 font-medium text-lg block">{group.name}</span>
+                    {/* Display member count */}
+                    <span className="text-sm text-gray-500 block">{group.members ? group.members.length : 0} members</span>
                   </div>
                 </div>
-    
-                {/* Number of Friends */}
-                <div className="ml-2">
-                  <span className="text-gray-700 text-md font-small">300 Friends</span>
-                </div>
               </div>
-    
-              {/* Edit Button */}
-              <div>
-                <button className="flex flex-row bg-[#3F72AF] hover:bg-blue-600 font-medium py-2 px-8 rounded-lg">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />
-                  </svg>
-                  <span>Edit Personal Page</span>
-                </button>
-              </div>
+
+              {/* Action Buttons */}
+              {!isAdmin && (
+                member ? (
+                  <div>
+                    <button onClick={handleLeaveGroup} className="flex flex-row bg-[#3F72AF] hover:bg-blue-600 font-medium py-2 px-8 rounded-lg">
+                      <span>Leave Group</span>
+                    </button>
+                  </div>
+                ) : requestSent ? (
+                  <div>
+                    <button onClick={handleCancelRequest} className="flex flex-row bg-gray-500 hover:bg-gray-600 font-medium py-2 px-4 rounded-lg text-white">
+                      <span>Cancel Request</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    <button onClick={handleJoinGroup} className="flex flex-row bg-blue-500 hover:bg-blue-600 font-medium py-2 px-4 rounded-lg text-white">
+                      <span>Join Group</span>
+                    </button>
+                  </div>
+                )
+              )}
             </div>
           </div>
         </section>
-        <LeftGroupNav />
-        <div className="flex-grow ml-8">
-        <WritePost user={{ avatar: 'path_to_avatar_image.jpg', username: 'Current User' }} />
-                    {dummyPosts.map((post, index) => (
-                        <Post
-                            key={index}
-                            avatar={post.author.avatar}
-                            name={post.author.username}
-                            publishedDate={post.createdAt}
-                            content={post.content}
-                            images={post.images}
-                            postId={post._id}
-                            userId={post.author._id}
-                        />
-                    ))}
+        <div className="flex px-2 py-8 mx-12 mr-20">
+          <section className="py-2 px-4 ml-16 mr-8 w-[25%]">
+            <div className="w-[90%] rounded-lg shadow-lg">
+              {member && (
+                <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
+                  <button className="w-full bg-[#3F72AF] py-2 rounded mb-2">Post</button>
+                </div>
+              )}
+              {isAdmin && (
+                <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
+                  {showRequestButton ? (
+                    <button onClick={toggleButton} className="w-full bg-[#3F72AF] py-2 rounded">Request</button>
+                  ) : (
+                    <button onClick={toggleButton} className="w-full bg-[#3F72AF] py-2 rounded">Post</button>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+          <div className="flex-grow ml-8">
+            {/* Display Group Posts */}
+            {posts.map((post, index) => (
+              <Post
+                key={index}
+                avatar={post.author.avatar}
+                name={post.author.username}
+                publishedDate={post.createdAt}
+                content={post.content}
+                images={post.images}
+                postId={post._id}
+                userId={post.author._id}
+              />
+            ))}
+          </div>
         </div>
       </div>
-      <Settings/>
-    </div>
-  )
+    </>
+  );
 }
 
-export default Group
+export default Group;

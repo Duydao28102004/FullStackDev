@@ -3,7 +3,8 @@ const {Schema, model} = require('../db/connection');
 const NotificationSchema = new Schema({
     sender: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     type: { type: String, required: true }, // e.g., 'friend_request', 'group_request', 'reaction'
-    receiver: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    receiver: { type: Schema.Types.ObjectId, ref: 'User' },
+    group: { type: Schema.Types.ObjectId, ref: 'Group' },
 }, { timestamps: true });
 
 const Notification = model('Notification', NotificationSchema);

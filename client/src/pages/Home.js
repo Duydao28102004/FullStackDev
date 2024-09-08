@@ -154,45 +154,73 @@ const Home = () => {
                                 <h1 className="font-bold text-lg text-center px-2 py-2">Groups You Manage</h1>
                                 {adminGroups.length > 0 ? (
                                     adminGroups.map((group) => (
-                                        <div
-                                            key={group._id}
-                                            className="flex items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300"
-                                        >
-                                            <Link to={`/group/${group._id}`} className="text-blue-600 font-semibold">
-                                                {group.name}
-                                            </Link>
-                                            <span className="text-sm text-gray-600">Admin</span>
-                                        </div>
+                                        <Link to={`/group/${group._id}`} key={group._id}>
+                                            <div className="flex items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300">
+                                                {/* Group Name on the left */}
+                                                <p className="text-blue-600 font-semibold">
+                                                    {group.name}
+                                                </p>
+                                                {/* Status and Role on the right */}
+                                                <div className="flex items-center space-x-4">
+                                                    {group.approved ? (
+                                                        <>
+                                                        <div className='ml-6'>
+                                                            <span className="text-gray-600">Status: </span>
+                                                            <span className="text-green-500">Approved</span>
+                                                        </div>
+                                                        
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                        <div className='ml-6'>
+                                                            <span className="text-gray-600">Status: </span>
+                                                            <span className="text-red-500">Pending</span>
+                                                        </div>
+                                                        
+                                                        </>
+                                                    )}
+                                                    <div className='ml-6'>
+                                                        <span className=" text-gray-600">Role: </span>
+                                                        <span className="text-gray-600">Admin</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </Link>
                                     ))
                                 ) : (
                                     <p className="text-center text-gray-500">You are not managing any groups.</p>
                                 )}
                             </div>
-                
+
                             {/* Groups You Are a Member of */}
                             <div>
                                 <h1 className="font-bold text-lg text-center px-2 py-2">Groups You Are a Member of</h1>
-                                <div className='flex w-full'>
-                                    {memberGroups.length > 0 ? (
-                                        memberGroups.map((group) => (
-                                            <Link to={`/group/${group._id}`}>
-                                                <div className="flex w-[70%] mx-auto items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300">
-                                                    <p className="text-blue-600 font-semibold">
-                                                        {group.name}
-                                                    </p>
+                                {memberGroups.length > 0 ? (
+                                    memberGroups.map((group) => (
+                                        <Link to={`/group/${group._id}`} key={group._id}>
+                                            <div className="flex items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300">
+                                                {/* Group Name on the left */}
+                                                <p className="text-blue-600 font-semibold">
+                                                    {group.name}
+                                                </p>
+                                                {/* Status and Role on the right */}
+                                                <div className="flex items-center space-x-4">
                                                     {group.approved ? (
+                                                        <>
+                                                        <span className="text-sm text-gray-600">Status: </span>
                                                         <span className="text-green-500">Approved</span>
+                                                        </>
                                                     ) : (
                                                         <span className="text-red-500">Pending</span>
                                                     )}
                                                     <span className="text-sm text-gray-600">Member</span>
-                                                </div>  
-                                            </Link>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-gray-500">You are not a member of any groups.</p>
-                                    )}
-                                </div>
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    ))
+                                ) : (
+                                    <p className="text-center text-gray-500">You are not a member of any groups.</p>
+                                )}
                             </div>
                         </div>
                     );
