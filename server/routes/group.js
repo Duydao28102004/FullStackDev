@@ -170,10 +170,10 @@ router.post('/api/groups/acceptGroupRequest', async (req, res) => {
             return res.status(400).json({ message: 'No pending group request found' });
         }
         // Add the receiver to the group
-        group.members.push(receiverid);
+        group.members.push(senderid);
         await group.save();
         // Remove the notification
-        await notification.remove();
+        await notification.deleteOne();
         res.json(group);
     } catch (error) {
         console.error('Error accepting group request:', error);
@@ -207,4 +207,55 @@ router.post('/api/groups/rejectGroupRequest', async (req, res) => {
         res.status(500).json({ message: 'Error rejecting group request' });
     }
 });
+
+router.get('/api/groups/getAllGroupRequests', async (req, res) => {
+    try {
+        const { groupid } = req.query;
+        const notifications = await Notification.find({ group: groupid }).populate('sender', 'username avatar');
+        res.json(notifications);
+    } catch (error) {
+        console.error('Error getting group requests:', error);
+        res.status(500).json({ message: 'Error getting group requests' });
+    }
+});
+
+router.post('/api/groups/createPost', async (req, res) => {
+    
+    const { userid, groupid, content, images, visibility } = req.body;
+    try {
+        // Check if the group exists
+        const group = await Group.findById(groupid);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+        const user = await User.findById(userid);
+        console.log('call')
+        // Create a new post with the provided data
+        const post = new Post({
+            author: user._id,
+            group: groupid,
+            content,
+            images,
+            visibility
+        });
+        // Save the post to the database
+        await post.save();
+        res.json(post);
+    } catch (error) {
+        console.error('Error creating post:', error);
+        res.status(500).json({ message: 'Error creating post' });
+    }
+});
+
+router.get('/api/groups/getPosts', async (req, res) => {
+    try {
+        const { groupid } = req.query;
+        const posts = await Post.find({ group: groupid }).populate('author');
+        res.json(posts);
+    } catch (error) {
+        console.error('Error getting posts:', error);
+        res.status(500).json({ message: 'Error getting posts' });
+    }
+})
+
 module.exports = router;

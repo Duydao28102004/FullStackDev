@@ -4,6 +4,7 @@ import Post from '../components/Post'; // Import if you want to show posts
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
 import { useSession } from '../LoginData'; // Import if needed
+import WritePost from '../components/WritePost'; // Import if you want to show posts
 
 const Group = () => {
   const { groupid } = useParams();
@@ -13,34 +14,36 @@ const Group = () => {
   const [member, setMember] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // New state for admin check
   const [showRequestButton, setShowRequestButton] = useState(false); // Toggle for admin
+  const [GroupRequests, setGroupRequests] = useState([]); // New state for group request
+  const [user, setUser] = useState({});
   const { userData } = useSession();
 
   useEffect(() => {
     const fetchGroupAndPosts = async () => {
       if (userData && userData.userid) {
         try {
-          // Define all the API calls as promises
+          const postsPromise = axios.get(`http://localhost:3001/api/groups/getPosts?groupid=${groupid}`);
+          const userPromise = axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`);
           const groupPromise = axios.get(`http://localhost:3001/api/groups/getGroup?groupid=${groupid}`);
           const memberPromise = axios.get(`http://localhost:3001/api/groups/getGroupRequest?userid=${userData.userid}&groupid=${groupid}`);
-          // Wait for all promises to resolve
-          const [groupResponse, memberRespone] = await Promise.all([groupPromise, memberPromise]);
-          console.log(memberRespone.data);
-          // Check if the user is a member of the group
+          const [postsResponse, userResponse, groupResponse, memberRespone] = await Promise.all([postsPromise, userPromise, groupPromise, memberPromise]);
+
+          setPosts(postsResponse.data);
+          setUser(userResponse.data);
+
           if (groupResponse.data.members.includes(userData.userid)) {
             setMember(true);
           }
 
-          // Check if the user is an admin of the group
           if (groupResponse.data.admins.includes(userData.userid)) {
             setIsAdmin(true);
-            setShowRequestButton(true); // Admin can toggle between buttons
+            setShowRequestButton(true);
+            const groupRequests = await axios.get(`http://localhost:3001/api/groups/getAllGroupRequests?groupid=${groupid}`);
+            setGroupRequests(groupRequests.data);
           }
 
-          // Set the state with the resolved data
           setGroup(groupResponse.data);
 
-
-          // Check membership status
           if (memberRespone.data.member) {
             setMember(true);
           }
@@ -58,36 +61,51 @@ const Group = () => {
   }, [groupid, userData, requestSent]);
 
   const handleJoinGroup = async () => {
-    console.log('join group');
-    console.log(userData.userid, groupid);
     const response = await axios.post('http://localhost:3001/api/groups/joinGroupRequest', {
       userid: userData.userid,
       groupid
     });
-    console.log(response.data);
     setRequestSent(true);
   };
 
   const handleLeaveGroup = async () => {
-    console.log('leave group');
-    console.log(userData.userid, groupid);
     const response = await axios.post('http://localhost:3001/api/groups/leaveGroup', {
       userid: userData.userid,
       groupid
     });
-    console.log(response.data);
     setMember(false);
   };
 
   const handleCancelRequest = async () => {
-    console.log('cancel request');
-    console.log(userData.userid, groupid);
     const response = await axios.post('http://localhost:3001/api/groups/rejectGroupRequest', {
       userid: userData.userid,
       groupid
     });
-    console.log(response.data);
     setRequestSent(false);
+  };
+
+  const handleAcceptRequest = async (requestId) => {
+    try {
+      await axios.post(`http://localhost:3001/api/groups/acceptGroupRequest`, {  
+        senderid: requestId, 
+        groupid 
+      });
+      setGroupRequests(GroupRequests.filter(request => request._id !== requestId));
+    } catch (error) {
+      console.error('Error accepting request:', error);
+    }
+  };
+
+  const handleRejectRequest = async (requestId) => {
+    try {
+      await axios.post(`http://localhost:3001/api/groups/rejectGroupRequest`, { 
+        senderid: requestId, 
+        groupid 
+      });
+      setGroupRequests(GroupRequests.filter(request => request._id !== requestId));
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+    }
   };
 
   const toggleButton = () => {
@@ -101,18 +119,14 @@ const Group = () => {
         <section className="py-8 px-6">
           <div className="bg-[#DBE2EF] rounded-lg shadow-2xl py-2 ml-20 mr-20">
             <div className="flex justify-between items-center max-w-1xl mx-auto p-16">
-              {/* Group Info */}
               <div className="flex items-center space-x-4">
                 <div className="flex items-center space-x-2">
                   <div>
                     <span className="text-gray-700 font-medium text-lg block">{group.name}</span>
-                    {/* Display member count */}
                     <span className="text-sm text-gray-500 block">{group.members ? group.members.length : 0} members</span>
                   </div>
                 </div>
               </div>
-
-              {/* Action Buttons */}
               {!isAdmin && (
                 member ? (
                   <div>
@@ -157,19 +171,40 @@ const Group = () => {
             </div>
           </section>
           <div className="flex-grow ml-8">
-            {/* Display Group Posts */}
-            {posts.map((post, index) => (
-              <Post
-                key={index}
-                avatar={post.author.avatar}
-                name={post.author.username}
-                publishedDate={post.createdAt}
-                content={post.content}
-                images={post.images}
-                postId={post._id}
-                userId={post.author._id}
-              />
-            ))}
+            {showRequestButton ? (
+              <div>
+                <h2>Group Requests</h2>
+                {GroupRequests.map(request => (
+                  <div key={request._id} className="mb-4 p-4 bg-white rounded-lg shadow">
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <p>{request.sender.username}</p>
+                      </div>
+                      <div className="flex space-x-4">
+                        <button onClick={() => handleAcceptRequest(request.sender._id)} className="bg-green-500 text-white py-2 px-4 rounded">Accept</button>
+                        <button onClick={() => handleRejectRequest(request.sender._id)} className="bg-red-500 text-white py-2 px-4 rounded">Reject</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <>
+              <WritePost user={user} groupid={groupid} />
+              {posts.map((post, index) => (    
+                  <Post
+                    key={index}
+                    avatar={post.author.avatar}
+                    name={post.author.username}
+                    publishedDate={post.createdAt}
+                    content={post.content}
+                    images={post.images}
+                    postId={post._id}
+                    userId={post.author._id}
+                  />
+              ))}
+              </>
+            )}
           </div>
         </div>
       </div>

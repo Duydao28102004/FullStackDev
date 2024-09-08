@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const AddPost = ({ onClose, user }) => {
+const AddPost = ({ onClose, user, groupid }) => {
     const [isMediaBoxVisible, setIsMediaBoxVisible] = useState(false);
     const [postContent, setPostContent] = useState("");
     const [imageStrings, setImageStrings] = useState([]); // Store Base64 strings
@@ -38,6 +38,18 @@ const AddPost = ({ onClose, user }) => {
         };
 
         try {
+            if (groupid) {
+                const response = await axios.post(`http://localhost:3001/api/groups/createPost`, {
+                    userid: user._id, // Assuming you have user data in your state
+                    groupid: groupid,
+                    content: postContent,
+                    images: imageStrings, // Base64 strings
+                    visibility: 'public', // Visibility selected by user
+                });
+                console.log('Post created:', response.data);
+                onClose();
+                return;
+            }
             const response = await axios.post('http://localhost:3001/api/posts/createPost', formData);
             console.log('Post created:', response.data);
             onClose();

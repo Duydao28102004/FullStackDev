@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PostModal from './AddPost';
 
-const WritePost = ({user}) => {
+const WritePost = ({user, groupid}) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleOpenModal = () => {
@@ -33,6 +33,7 @@ const WritePost = ({user}) => {
                 <PostModal
                     onClose={handleCloseModal}
                     user={user}
+                    groupid={groupid}
                 />
             )}
         </div>

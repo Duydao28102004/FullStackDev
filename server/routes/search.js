@@ -6,7 +6,6 @@ const Group = require('../models/Group');
 
 router.get('/api/search', async (req, res) => {
     try {
-        console.log('Search query:', req.query);
         const { query } = req.query;
 
         // Search for users, posts, and groups based on the query
