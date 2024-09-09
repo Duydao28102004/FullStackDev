@@ -8,7 +8,6 @@ const Reaction = require('../models/Reaction');
 router.post('/api/reactions/react', async (req, res) => {
     try {
         const { userid, postid, type } = req.body;
-        console.log(req.body)
         // Check if the user exists
         const user = await User.findById(userid);
         if (!user) {
@@ -41,7 +40,6 @@ router.post('/api/reactions/react', async (req, res) => {
         const savedReaction = await reaction.save();
         post.reactions.push(savedReaction._id);
         await post.save();
-        console.log(savedReaction);
         res.status(201).json(savedReaction);
     } catch (error) {
         console.error('Error reacting to post:', error);

@@ -29,7 +29,6 @@ const AddPost = ({ onClose, user, groupid }) => {
     };
 
     const handlePublish = async () => {
-        console.log('Publishing post...');
         const formData = {
             userid: user._id, // Assuming you have user data in your state
             content: postContent,
@@ -46,14 +45,12 @@ const AddPost = ({ onClose, user, groupid }) => {
                     images: imageStrings, // Base64 strings
                     visibility: 'public', // Visibility selected by user
                 });
-                console.log('Post created:', response.data);
                 onClose();
-                window.location.reload();
                 return;
             }
             const response = await axios.post('http://localhost:3001/api/posts/createPost', formData);
-            console.log('Post created:', response.data);
             onClose();
+            window.location.reload();
         } catch (error) {
             console.error('Error creating post:', error);
         }

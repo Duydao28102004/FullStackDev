@@ -1,25 +1,21 @@
 import React from "react";
 
-const LeftPanel = () => {
+const LeftPanel = ({ images }) => {
+    // Display up to 6 images from the array
+    const displayedImages = images.slice(0, 6);
     return (
-      <section className="py-2 px-4 ml-16 mr-8">
-        <div className="w-[90%] rounded-lg shadow-lg">
-          <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
-            <h2 className="text-lg font-bold mb-2">Introduction about Yourself</h2>
-            <button className="w-full bg-[#3F72AF] py-2 rounded mb-2">Add Autobiography</button>
-            <button className="w-full bg-[#3F72AF] py-2 rounded">Edit Detail Description</button>
-          </div>
-          <br/>
-          <div className="mb-6 p-4 bg-[#DBE2EF] rounded-lg shadow">
-            <h2 className="text-lg font-bold mb-2">Your Images</h2>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="w-full h-20 bg-blue-800 rounded"></div>
-              <div className="w-full h-20 bg-blue-800 rounded"></div>
-              <div className="w-full h-20 bg-blue-800 rounded"></div>
-              <div className="w-full h-20 bg-blue-800 rounded"></div>
-              <div className="w-full h-20 bg-blue-800 rounded"></div>
-              <div className="w-full h-20 bg-blue-800 rounded"></div>
-            </div>
+      <section className="py-2 px-4 ml-16 mr-8 w-[30%]">
+        <div className="left-panel bg-white p-4 shadow-md rounded-lg w-full">
+          <h2 className="text-xl font-bold mb-4">Nearest Posts</h2>
+          <div className="grid grid-cols-3 gap-2">
+            {displayedImages.map((image, index) => (
+              <img
+                key={index}
+                src={image}
+                alt={`Nearest Post ${index + 1}`}
+                className="object-cover w-full h-32 rounded-md"
+              />
+            ))}
           </div>
         </div>
       </section>

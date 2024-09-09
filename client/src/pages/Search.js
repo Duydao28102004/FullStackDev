@@ -20,7 +20,6 @@ export default function Search() {
     const fetchSearchResults = async () => {
         try {
             const response = await axios.get(`http://localhost:3001/api/search?query=${query}`);
-            console.log(response.data);
             setSearchResults(response.data);
         } catch (error) {
             console.error('Error fetching search results:', error);

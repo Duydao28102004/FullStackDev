@@ -114,7 +114,6 @@ router.get('/api/groups/getGroupRequest', async (req, res) => {
         }
         const notification = await Notification.findOne({ receiver: userid, type: 'groupRequest', group: groupid });
         if (notification) {
-            console.log(notifications);
             return res.json({member: false, requestSent: true});
         }
         return res.json({member: false, requestSent: false});
@@ -229,7 +228,6 @@ router.post('/api/groups/createPost', async (req, res) => {
             return res.status(404).json({ message: 'Group not found' });
         }
         const user = await User.findById(userid);
-        console.log('call')
         // Create a new post with the provided data
         const post = new Post({
             author: user._id,

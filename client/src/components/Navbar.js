@@ -21,7 +21,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="shadow-md my-5 h-[5%]">
+    <nav className="shadow-md mb-5 h-[5%]">
       <div className="w-[100%] px-4 py-4 flex items-center justify-between bg-[#DBE2EF] shadow-lg">
         <div className="flex items-center space-x-16">
           <Link to="/">

@@ -49,14 +49,12 @@ const Register = () => {
     }
 
     try {
-      console.log('api sent');
       const response = await axios.post('http://localhost:3001/api/register', {
         username: formData.username,
         email: formData.email,
         password: formData.password,
         base64Image: formData.base64Image,
       });
-      console.log('API Response:', response.data);
       navigate('/login');
     } catch (error) {
       console.error('Error making API request:', error.response.data);

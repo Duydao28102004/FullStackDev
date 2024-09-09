@@ -59,7 +59,6 @@ const Home = () => {
 
     // Function to handle group creation
     const handleGroupCreated = (group) => {
-        console.log('Group created:', group);
         setShowCreateGroupModal(false); // Close modal after creation
     };
 
@@ -69,7 +68,6 @@ const Home = () => {
             if (response.status === 200) {
                 // After successful deletion, remove the group from the list
                 setAdminGroups(adminGroups.filter(group => group._id !== groupId));
-                console.log('Group deleted successfully');
             }
         } catch (error) {
             console.error('Error deleting group:', error);

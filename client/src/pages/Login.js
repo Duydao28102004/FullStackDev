@@ -21,12 +21,10 @@ const Login = () => {
   const handleSubmission = async (e) => {
     e.preventDefault(); // Prevent form from submitting the traditional way
     try {
-      console.log('API sent');
       const response = await axios.post('http://localhost:3001/api/login', {
         username: username,
         password: password,
       });
-      console.log('API Response:', response.data);
       updateUserData({ userid: response.data.userid, avatar: response.data.avatar, username: response.data.username });
       navigate('/');
     } catch (error) {

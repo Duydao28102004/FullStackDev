@@ -58,8 +58,12 @@ const UserDetail = () => {
 }, [userid, userData, checkAuth]);
 
   // Filter posts authored by the current user
-  const userPosts = posts.filter(post => post.author._id === userid);
+  const userPosts = posts
+  .filter(post => post.author._id === userid && (friend || post.visibility !== 'friends'))
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)); // Sort by newest first
 
+  // Collect all images from the nearest posts
+  const nearestImages = userPosts.flatMap(post => post.images).slice(0, 6);
   const handleAddFriend = async () => {
     console.log('add friend');
     console.log(userData.userid, userid);
@@ -194,8 +198,8 @@ const UserDetail = () => {
         </div>
       </section>
       <div className="flex px-2 py-8 mx-12 mr-20">
-        <LeftPanel />
-        <div className="flex-grow ml-8">
+        <LeftPanel images={nearestImages} />
+        <div className="flex-grow ml-8 w-[80%]">
           {/* Write Post - only show if userData.userid matches userid */}
           {userData.userid === userid && <WritePost user={user} />}
           

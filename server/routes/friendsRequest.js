@@ -92,7 +92,6 @@ router.get('/api/friendsRequest/checkRequest', async (req, res) => {
         if (reverseRequest) {
             return res.status(200).json({ requestSent: false , reverse: true , friend: false});
         }
-        console.log("called")
         res.status(200).json({ requestSent: false , reverse: false , friend: false});
     } catch (error) {
         console.error('Error checking friend request:', error);
