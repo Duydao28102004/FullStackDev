@@ -84,7 +84,7 @@ export default function LeftSideNav({ onSelectContent }) {
 
                     {/* Copy Right */}
                     <div>
-                        <p className="text-center text-xs text-gray-500">© 2024 SocialPulse. All Rights Reserved.</p>
+                        <p className="text-center text-xs text-gray-500">© 2024 FaceGram. All Rights Reserved.</p>
                         <p className="text-center text-xs text-gray-500">Version 1.0.0</p>
                     </div>
                 </div>

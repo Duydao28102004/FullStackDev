@@ -8,6 +8,7 @@ import WritePost from '../components/WritePost'; // Import if you want to show p
 import CheckAuth from '../CheckAuth';
 
 
+
 const Group = () => {
   const { groupid } = useParams();
   const checkAuth = CheckAuth();
@@ -28,54 +29,43 @@ const Group = () => {
         const userPromise = axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`);
         const groupPromise = axios.get(`http://localhost:3001/api/groups/getGroup?groupid=${groupid}`);
         const memberPromise = axios.get(`http://localhost:3001/api/groups/getGroupRequest?userid=${userData.userid}&groupid=${groupid}`);
-
+  
         const [postsResponse, userResponse, groupResponse, memberResponse] = await Promise.all([postsPromise, userPromise, groupPromise, memberPromise]);
-
+  
         setUser(userResponse.data);
         setGroup(groupResponse.data);
-
-        // Check if user is a member or admin
+  
         if (groupResponse.data.members.includes(userData.userid)) {
           setMember(true);
         }
-
+  
         if (groupResponse.data.admins.includes(userData.userid)) {
           setIsAdmin(true);
           setShowRequestButton(true);
-
-          // Fetch group requests if user is admin
+  
           const groupRequests = await axios.get(`http://localhost:3001/api/groups/getAllGroupRequests?groupid=${groupid}`);
           setGroupRequests(groupRequests.data);
         }
-
-        // Handle group request status
+  
         if (memberResponse.data.member) {
           setMember(true);
         }
         if (memberResponse.data.requestSent) {
           setRequestSent(true);
         }
-
-        // Handle post visibility based on group visibility and membership
-        if (groupResponse.data.visibility === 'private' && groupResponse.data.members.includes(userData.userid)) {
-          setPosts(postsResponse.data);
-        } else if (groupResponse.data.visibility === 'private' && groupResponse.data.admins.includes(userData.userid)) {
-          setPosts(postsResponse.data);
-        } else if (groupResponse.data.visibility === 'public') {
-          setPosts(postsResponse.data);
-        }     
-
+        setPosts(postsResponse.data);     
+  
       } catch (error) {
         console.error('Error fetching group or posts:', error);
       }
     };
-
-    // Only fetch group and post data once when component is mounted
-    if (userData && userData.userid && !group._id ) {
+  
+    if (userData && userData.userid && !group._id) {
       checkAuth();
       fetchGroupData();
     }
-  }, [groupid, userData, checkAuth]);
+  }, [groupid, userData, checkAuth, group._id, member, requestSent, isAdmin]);
+  
 
   const handleJoinGroup = async () => {
     await axios.post('http://localhost:3001/api/groups/joinGroupRequest', {
@@ -197,15 +187,19 @@ const Group = () => {
                 <h3 className="text-lg font-semibold mb-2">Group Members</h3>
                 <div className="space-y-2">
                   {group.visibility === "public" ? (
-                    group.members && group.members.map(member => (
-                      <div key={member._id} className="flex items-center space-x-2">
-                        <img src={member.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
-                        <span>{member.username}</span>
-                      </div>
-                    ))
+                    group.members && group.members.length > 0 ? (
+                      group.members.map(member => (
+                        <div key={member._id} className="flex items-center space-x-2">
+                          <img src={member.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+                          <span>{member.username}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p>No members yet</p>
+                    )
                   ) : (
                     member || isAdmin ? (
-                      group.member ? (
+                      group.members && group.members.length > 0 ? (
                         group.members.map(member => (
                           <div key={member._id} className="flex items-center space-x-2">
                             <img src={member.avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
@@ -213,10 +207,10 @@ const Group = () => {
                           </div>
                         ))
                       ) : (
-                        <p>no member yet</p> 
+                        <p>No members yet</p>
                       )
-                    ):(
-                      <p>you have no permission to see member list</p>
+                    ) : (
+                      <p>You have no permission to see the member list</p>
                     )
                   )}
                 </div>

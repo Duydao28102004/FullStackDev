@@ -112,7 +112,7 @@ const Login = () => {
             </div>
           )}
           <br></br>
-          <p className="text-xs text-gray-400 mt-4">© 2024 SocialPulse. All Rights Reserved. SocialPulse is a trademark of COSC2769|COSC2808 Full Stack Development - Group 16.</p>
+          <p className="text-xs text-gray-400 mt-4">© 2024 FaceGram. All Rights Reserved. FaceGram is a trademark of COSC2769|COSC2808 Full Stack Development - Group 16.</p>
         </div>
 
         {/* Right Side - Image */}
