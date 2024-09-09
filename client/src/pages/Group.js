@@ -238,9 +238,25 @@ const Group = () => {
             ) : (
               
               group.visibility === 'public' ? (
-                <>
-                <WritePost user={user} groupid={groupid} />
-                {posts.map((post, index) => (    
+                isAdmin || member ? (
+                  <>
+                  <WritePost user={user} groupid={groupid} />
+                  {posts.map((post, index) => (    
+                      <Post
+                        key={index}
+                        avatar={post.author.avatar}
+                        name={post.author.username}
+                        publishedDate={post.createdAt}
+                        content={post.content}
+                        images={post.images}
+                        postId={post._id}
+                        userId={post.author._id}
+                      />
+                  ))}
+                  </>
+                ) : (
+                  <>
+                  {posts.map((post, index) => (    
                     <Post
                       key={index}
                       avatar={post.author.avatar}
@@ -253,6 +269,8 @@ const Group = () => {
                     />
                 ))}
                 </>
+                )
+                
               ) : (
                 isAdmin || member ? (
                   <>
