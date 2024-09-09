@@ -141,7 +141,7 @@ const Group = () => {
               {group.approved && !isAdmin && (
                 member ? (
                   <div>
-                    <button onClick={handleLeaveGroup} className="flex flex-row bg-[#3F72AF] hover:bg-blue-600 font-medium py-2 px-8 rounded-lg">
+                    <button onClick={handleLeaveGroup} className="flex flex-row bg-red-500 hover:bg-red-600 font-medium py-2 px-8 rounded-lg text-white">
                       <span>Leave Group</span>
                     </button>
                   </div>

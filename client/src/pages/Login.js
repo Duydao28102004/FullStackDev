@@ -87,12 +87,7 @@ const Login = () => {
                 </span>
               </div>
             </div>
-            <div className="flex items-center justify-between mb-4">
-              <label className="flex items-center">
-                <input type="checkbox" className="form-checkbox h-4 w-4 text-blue-600" />
-                <span className="ml-2 text-gray-700 text-sm">Remember Me</span>
-              </label>
-            </div>
+            
             <button
               type="submit"
               className="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline hover:bg-blue-600"
