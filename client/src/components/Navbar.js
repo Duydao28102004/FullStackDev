@@ -25,7 +25,7 @@ const Navbar = () => {
       <div className="w-[100%] px-4 py-4 flex items-center justify-between bg-[#DBE2EF] shadow-lg">
         <div className="flex items-center space-x-16">
           <Link to="/">
-            <h1 className="text-xl font-bold text-blue-600">SocialPulse</h1>
+            <h1 className="text-xl font-bold text-blue-600">FaceGram</h1>
           </Link>
         </div>
 

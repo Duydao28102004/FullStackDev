@@ -22,54 +22,60 @@ const Group = () => {
   const { userData } = useSession();
 
   useEffect(() => {
-    const fetchGroupAndPosts = async () => {
-      if (userData && userData.userid) {
-        try {
-          const postsPromise = axios.get(`http://localhost:3001/api/groups/getPosts?groupid=${groupid}`);
-          const userPromise = axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`);
-          const groupPromise = axios.get(`http://localhost:3001/api/groups/getGroup?groupid=${groupid}`);
-          const memberPromise = axios.get(`http://localhost:3001/api/groups/getGroupRequest?userid=${userData.userid}&groupid=${groupid}`);
-          const [postsResponse, userResponse, groupResponse, memberRespone] = await Promise.all([postsPromise, userPromise, groupPromise, memberPromise]);
+    const fetchGroupData = async () => {
+      try {
+        const postsPromise = axios.get(`http://localhost:3001/api/groups/getPosts?groupid=${groupid}`);
+        const userPromise = axios.get(`http://localhost:3001/api/getUser?userid=${userData.userid}`);
+        const groupPromise = axios.get(`http://localhost:3001/api/groups/getGroup?groupid=${groupid}`);
+        const memberPromise = axios.get(`http://localhost:3001/api/groups/getGroupRequest?userid=${userData.userid}&groupid=${groupid}`);
 
-          setUser(userResponse.data);
+        const [postsResponse, userResponse, groupResponse, memberResponse] = await Promise.all([postsPromise, userPromise, groupPromise, memberPromise]);
 
-          if (groupResponse.data.members.includes(userData.userid)) {
-            setMember(true);
-          }
+        setUser(userResponse.data);
+        setGroup(groupResponse.data);
 
-          if (groupResponse.data.admins.includes(userData.userid)) {
-            setIsAdmin(true);
-            setShowRequestButton(true);
-            const groupRequests = await axios.get(`http://localhost:3001/api/groups/getAllGroupRequests?groupid=${groupid}`);
-            setGroupRequests(groupRequests.data);
-          }
-
-          setGroup(groupResponse.data);
-          console.log(groupResponse.data)
-          // Check if the group is private and if the user is a member
-          if (groupResponse.data.visibility === 'private' && groupResponse.data.members.includes(userData.userid)) {
-            setPosts(postsResponse.data);
-          } else if (groupResponse.data.visibility === 'public') {
-            setPosts(postsResponse.data);
-          } else {
-            setPosts([]);
-          }
-
-          if (memberRespone.data.member) {
-            setMember(true);
-          }
-          if (memberRespone.data.requestSent) {
-            setRequestSent(true);
-          }
-
-        } catch (error) {
-          console.error('Error fetching group or posts:', error);
+        // Check if user is a member or admin
+        if (groupResponse.data.members.includes(userData.userid)) {
+          setMember(true);
         }
+
+        if (groupResponse.data.admins.includes(userData.userid)) {
+          setIsAdmin(true);
+          setShowRequestButton(true);
+
+          // Fetch group requests if user is admin
+          const groupRequests = await axios.get(`http://localhost:3001/api/groups/getAllGroupRequests?groupid=${groupid}`);
+          setGroupRequests(groupRequests.data);
+        }
+
+        // Handle group request status
+        if (memberResponse.data.member) {
+          setMember(true);
+        }
+        if (memberResponse.data.requestSent) {
+          setRequestSent(true);
+        }
+
+        // Handle post visibility based on group visibility and membership
+        if (groupResponse.data.visibility === 'private' && groupResponse.data.members.includes(userData.userid)) {
+          setPosts(postsResponse.data);
+        } else if (groupResponse.data.visibility === 'private' && groupResponse.data.admins.includes(userData.userid)) {
+          setPosts(postsResponse.data);
+        } else if (groupResponse.data.visibility === 'public') {
+          setPosts(postsResponse.data);
+        }     
+
+      } catch (error) {
+        console.error('Error fetching group or posts:', error);
       }
     };
-    checkAuth();
-    fetchGroupAndPosts();
-  }, [groupid, userData, requestSent, checkAuth]);
+
+    // Only fetch group and post data once when component is mounted
+    if (userData && userData.userid && !group._id ) {
+      checkAuth();
+      fetchGroupData();
+    }
+  }, [groupid, userData, checkAuth]);
 
   const handleJoinGroup = async () => {
     await axios.post('http://localhost:3001/api/groups/joinGroupRequest', {
@@ -136,7 +142,7 @@ const Group = () => {
                 <div className="flex items-center space-x-2">
                   <div>
                     <span className="text-gray-700 font-medium text-lg block">{group.name}</span>
-                    <span className="text-sm text-gray-500 block">{group.members ? group.members.length : 0} members</span>
+                    <span className="text-sm text-gray-500 block">{group.members ? group.members.length + 1 : 0} members</span>
                     <span className="text-sm text-gray-500 block">{group.visibility}</span>
                     <span className="text-sm text-gray-500 block">{group.description}</span>
                   </div>

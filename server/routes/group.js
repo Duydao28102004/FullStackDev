@@ -258,4 +258,41 @@ router.get('/api/groups/getPosts', async (req, res) => {
     }
 })
 
+router.post('/api/groups/deleteGroup', async (req, res) => {
+    const { groupid } = req.body;
+
+    try {
+        // Find the group by ID
+        const group = await Group.findById(groupid);
+        if (!group) {
+            return res.status(404).json({ message: 'Group not found' });
+        }
+
+        // Remove the group from each member's list of groups
+        await Promise.all(group.members.map(async (memberId) => {
+            await User.findByIdAndUpdate(memberId, { 
+                $pull: { groups: groupid }  // Remove group from member's groups list
+            });
+        }));
+
+        // Remove the group from each member's list of groups
+        await Promise.all(group.admins.map(async (adminId) => {
+            await User.findByIdAndUpdate(adminId, { 
+                $pull: { groups: groupid }  // Remove group from member's groups list
+            });
+        }));
+
+        // Delete all posts in the group
+        await Post.deleteMany({ group: groupid });
+
+        // Delete the group itself
+        await Group.findByIdAndDelete(groupid);
+
+        res.status(200).json({ message: 'Group and its references successfully deleted' });
+    } catch (error) {
+        console.error('Error deleting group:', error);
+        res.status(500).json({ message: 'Error deleting group' });
+    }
+});
+
 module.exports = router;

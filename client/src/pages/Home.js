@@ -63,6 +63,20 @@ const Home = () => {
         setShowCreateGroupModal(false); // Close modal after creation
     };
 
+    const handleDeleteGroup = async (groupId) => {
+        try {
+            const response = await axios.post('http://localhost:3001/api/groups/deleteGroup', { groupid: groupId });
+            if (response.status === 200) {
+                // After successful deletion, remove the group from the list
+                setAdminGroups(adminGroups.filter(group => group._id !== groupId));
+                console.log('Group deleted successfully');
+            }
+        } catch (error) {
+            console.error('Error deleting group:', error);
+        }
+    };
+    
+
     const renderMainContent = () => {
         if (!user) {
             return <div>Loading...</div>; // Loading state
@@ -154,38 +168,39 @@ const Home = () => {
                                 <h1 className="font-bold text-lg text-center px-2 py-2">Groups You Manage</h1>
                                 {adminGroups.length > 0 ? (
                                     adminGroups.map((group) => (
-                                        <Link to={`/group/${group._id}`} key={group._id}>
-                                            <div className="flex items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300">
+                                        <div key={group._id} className="flex items-center justify-between bg-gray-200 py-2 px-4 my-2 rounded-lg hover:bg-gray-300">
+                                            <Link to={`/group/${group._id}`}>
                                                 {/* Group Name on the left */}
                                                 <p className="text-blue-600 font-semibold">
                                                     {group.name}
                                                 </p>
-                                                {/* Status and Role on the right */}
-                                                <div className="flex items-center space-x-4">
-                                                    {group.approved ? (
-                                                        <>
-                                                        <div className='ml-6'>
-                                                            <span className="text-gray-600">Status: </span>
-                                                            <span className="text-green-500">Approved</span>
-                                                        </div>
-                                                        
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                        <div className='ml-6'>
-                                                            <span className="text-gray-600">Status: </span>
-                                                            <span className="text-red-500">Pending</span>
-                                                        </div>
-                                                        
-                                                        </>
-                                                    )}
+                                            </Link>
+                                            {/* Status, Role, and Delete Button on the right */}
+                                            <div className="flex items-center space-x-4">
+                                                {group.approved ? (
                                                     <div className='ml-6'>
-                                                        <span className=" text-gray-600">Role: </span>
-                                                        <span className="text-gray-600">Admin</span>
+                                                        <span className="text-gray-600">Status: </span>
+                                                        <span className="text-green-500">Approved</span>
                                                     </div>
+                                                ) : (
+                                                    <div className='ml-6'>
+                                                        <span className="text-gray-600">Status: </span>
+                                                        <span className="text-red-500">Pending</span>
+                                                    </div>
+                                                )}
+                                                <div className='ml-6'>
+                                                    <span className="text-gray-600">Role: </span>
+                                                    <span className="text-gray-600">Admin</span>
                                                 </div>
+                                                {/* Delete Button */}
+                                                <button
+                                                    className="bg-red-500 text-white px-3 py-1 rounded-md"
+                                                    onClick={() => handleDeleteGroup(group._id)} // Trigger delete function
+                                                >
+                                                    Delete Group
+                                                </button>
                                             </div>
-                                        </Link>
+                                        </div>
                                     ))
                                 ) : (
                                     <p className="text-center text-gray-500">You are not managing any groups.</p>

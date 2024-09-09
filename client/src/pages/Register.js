@@ -69,7 +69,7 @@ const Register = () => {
         {/* Left Side - Sign Up Form */}
         <div className="flex flex-col justify-center p-10 w-full md:w-1/3 bg-white">
           <div className="flex flex-col items-center">
-            <h1 className="text-3xl font-bold text-blue-600 mb-4">SocialPulse</h1>
+            <h1 className="text-3xl font-bold text-blue-600 mb-4">FaceGram</h1>
             <br />
             <h2 className="text-2xl font-bold mb-8">Sign Up</h2>
           </div>

@@ -88,7 +88,7 @@ export default function Post({ avatar, name, publishedDate, content, images, pos
         try {
             await axios.delete(`http://localhost:3001/api/posts/deletePost/${postId}`);
             // You may want to refresh the post list after deletion
-            console.log('Post deleted');
+            window.location.reload();
         } catch (error) {
             console.error('Error deleting post:', error);
         }

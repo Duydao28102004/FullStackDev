@@ -36,7 +36,7 @@ export default function EditPostModal({ postId, content, images, onClose }) {
             });
     
             // Reload the page to reflect the updates
-            // window.location.reload();  // This will reload the current page
+            window.location.reload();  // This will reload the current page
         } catch (error) {
             console.error('Error updating post:', error);
         }

@@ -48,6 +48,7 @@ const AddPost = ({ onClose, user, groupid }) => {
                 });
                 console.log('Post created:', response.data);
                 onClose();
+                window.location.reload();
                 return;
             }
             const response = await axios.post('http://localhost:3001/api/posts/createPost', formData);
